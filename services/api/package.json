@@ -1,0 +1,20 @@
+{
+  "name": "@stockpot/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "start": "bun src/index.ts",
+    "test": "bun test --pass-with-no-tests",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@stockpot/domain": "workspace:*",
+    "@stockpot/shared": "workspace:*",
+    "hono": "^4.9.6"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.22"
+  }
+}

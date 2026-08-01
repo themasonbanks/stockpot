@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "Stockpot",
+    "slug": "stockpot",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.themasonbanks.stockpot"
+    },
+    "android": {
+      "package": "com.themasonbanks.stockpot"
+    }
+  }
+}
