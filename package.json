@@ -15,10 +15,13 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "format:check": "biome format .",
+    "db:test": "supabase test db",
+    "db:types": "supabase gen types typescript --local > packages/database/src/database.types.ts",
     "typecheck": "turbo typecheck"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.2",
+    "supabase": "^2.113.0",
     "turbo": "^2.5.6",
     "typescript": "^5.9.2"
   }
