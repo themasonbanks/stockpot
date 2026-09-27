@@ -88,6 +88,10 @@ bun install
 cp .env.example .env
 ```
 
+Fill in the public Supabase values for Expo. Backend processes additionally use
+`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`; the service-role key must never be
+placed in an `EXPO_PUBLIC_*` variable or bundled into the mobile app.
+
 Start all development tasks:
 
 ```sh
@@ -108,6 +112,20 @@ To run Supabase locally after installing its CLI:
 ```sh
 supabase start
 supabase stop
+```
+
+Apply migrations and run the database policy tests with:
+
+```sh
+supabase db reset
+bun run db:test
+```
+
+After changing the schema, refresh the shared TypeScript definitions while the
+local stack is running and commit the result:
+
+```sh
+bun run db:types
 ```
 
 ## Root commands
