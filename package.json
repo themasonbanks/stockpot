@@ -11,13 +11,14 @@
     "dev": "turbo dev",
     "dev:mobile": "turbo dev --filter=@stockpot/mobile",
     "dev:api": "turbo dev --filter=@stockpot/api",
-    "test": "turbo test",
+    "test": "bun run test:scripts && turbo test",
     "lint": "biome check .",
     "format": "biome format --write .",
     "format:check": "biome format .",
     "db:test": "supabase test db",
-    "db:types": "supabase gen types typescript --local > packages/database/src/database.types.ts",
-    "typecheck": "turbo typecheck"
+    "db:types": "bun scripts/generate-database-types.ts",
+    "typecheck": "turbo typecheck",
+    "test:scripts": "bun test scripts"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.2",

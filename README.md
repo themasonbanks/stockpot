@@ -128,6 +128,10 @@ local stack is running and commit the result:
 bun run db:types
 ```
 
+Type generation replaces the committed file only after successful, non-empty output.
+A stopped local Supabase stack leaves the previous types intact. Signup display
+names are trimmed and capped at 80 characters; blank names remain unset.
+
 ## Root commands
 
 | Command | Purpose |
