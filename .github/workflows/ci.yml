@@ -1,0 +1,55 @@
+name: Stockpot CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stockpot-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Code quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+      - run: bun install --frozen-lockfile
+      - run: bun run lint
+      - run: bun run typecheck
+      - run: bun run test
+        env:
+          TURBO_FORCE: "true"
+
+  database:
+    name: Database policies and types
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+      - run: bun install --frozen-lockfile
+      - name: Start disposable local Supabase
+        run: bunx --no-install supabase start
+      - name: Test migrations and row-level security
+        run: bun run db:test
+      - name: Generate database types
+        run: bun run db:types
+      - name: Format generated types consistently
+        run: bunx --no-install biome format --write packages/database/src/database.types.ts
+      - name: Check committed types match the migrated database
+        run: git diff --exit-code -- packages/database/src/database.types.ts
+      - name: Stop disposable local Supabase
+        if: always()
+        run: bunx --no-install supabase stop --no-backup

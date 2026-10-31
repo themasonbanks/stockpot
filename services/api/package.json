@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@stockpot/database": "workspace:*",
     "@stockpot/domain": "workspace:*",
     "@stockpot/shared": "workspace:*",
     "hono": "^4.9.6"

@@ -88,6 +88,10 @@ bun install
 cp .env.example .env
 ```
 
+Fill in the public Supabase values for Expo. Backend processes additionally use
+`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`; the service-role key must never be
+placed in an `EXPO_PUBLIC_*` variable or bundled into the mobile app.
+
 Start all development tasks:
 
 ```sh
@@ -110,6 +114,24 @@ supabase start
 supabase stop
 ```
 
+Apply migrations and run the database policy tests with:
+
+```sh
+supabase db reset
+bun run db:test
+```
+
+After changing the schema, refresh the shared TypeScript definitions while the
+local stack is running and commit the result:
+
+```sh
+bun run db:types
+```
+
+Type generation replaces the committed file only after successful, non-empty output.
+A stopped local Supabase stack leaves the previous types intact. Signup display
+names are trimmed and capped at 80 characters; blank names remain unset.
+
 ## Root commands
 
 | Command | Purpose |
@@ -126,3 +148,15 @@ supabase stop
 ## MVP status
 
 Stockpot is at the repository-scaffolding stage. The monorepo, minimal Expo client, Hono health endpoint, shared package boundaries, and local Supabase layout are present. Inventory lots, expiry modelling, meal planning, shopping lists, receipt scanning, consumption flows, persistence, authentication, and MCP exposure are intentionally not implemented in this scaffold and will arrive in later tickets.
+
+## Continuous integration
+
+Pull requests and pushes to `main` run `.github/workflows/ci.yml`. Code checks use the
+Bun version in `package.json`, frozen dependencies, lint, all workspace type checks and
+uncached tests. A separate Ubuntu job starts disposable local Supabase, applies
+migrations, runs the SQL/RLS tests and compares regenerated, formatted database types
+with the committed file. No hosted Supabase credentials are needed.
+
+See [delivery criteria](docs/definition-of-done.md) and the
+[architecture decision template](docs/adr/template.md). Branch protection must be
+configured separately to require these checks before merging.
