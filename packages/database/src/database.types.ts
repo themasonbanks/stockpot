@@ -28,6 +28,95 @@ export type Database = {
   };
   public: {
     Tables: {
+      household_members: {
+        Row: {
+          archived_at: string | null;
+          household_id: string;
+          id: string;
+          joined_at: string;
+          role: string;
+          slot: number;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          archived_at?: string | null;
+          household_id: string;
+          id?: string;
+          joined_at?: string;
+          role: string;
+          slot: number;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          archived_at?: string | null;
+          household_id?: string;
+          id?: string;
+          joined_at?: string;
+          role?: string;
+          slot?: number;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "household_members_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "household_members_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      households: {
+        Row: {
+          archived_at: string | null;
+          created_at: string;
+          created_by_user_id: string;
+          default_servings: number;
+          id: string;
+          name: string;
+          timezone: string;
+          updated_at: string;
+        };
+        Insert: {
+          archived_at?: string | null;
+          created_at?: string;
+          created_by_user_id: string;
+          default_servings?: number;
+          id: string;
+          name: string;
+          timezone?: string;
+          updated_at?: string;
+        };
+        Update: {
+          archived_at?: string | null;
+          created_at?: string;
+          created_by_user_id?: string;
+          default_servings?: number;
+          id?: string;
+          name?: string;
+          timezone?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "households_created_by_user_id_fkey";
+            columns: ["created_by_user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       profiles: {
         Row: {
           created_at: string;
@@ -54,7 +143,38 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      archive_household: {
+        Args: { target_household_id: string };
+        Returns: undefined;
+      };
+      create_household: {
+        Args: {
+          household_id: string;
+          household_name: string;
+          household_timezone?: string;
+          servings?: number;
+        };
+        Returns: {
+          archived_at: string | null;
+          created_at: string;
+          created_by_user_id: string;
+          default_servings: number;
+          id: string;
+          name: string;
+          timezone: string;
+          updated_at: string;
+        };
+        SetofOptions: {
+          from: "*";
+          to: "households";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      is_household_member: {
+        Args: { target_household_id: string };
+        Returns: boolean;
+      };
     };
     Enums: {
       [_ in never]: never;
