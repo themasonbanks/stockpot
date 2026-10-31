@@ -148,3 +148,15 @@ names are trimmed and capped at 80 characters; blank names remain unset.
 ## MVP status
 
 Stockpot is at the repository-scaffolding stage. The monorepo, minimal Expo client, Hono health endpoint, shared package boundaries, and local Supabase layout are present. Inventory lots, expiry modelling, meal planning, shopping lists, receipt scanning, consumption flows, persistence, authentication, and MCP exposure are intentionally not implemented in this scaffold and will arrive in later tickets.
+
+## Continuous integration
+
+Pull requests and pushes to `main` run `.github/workflows/ci.yml`. Code checks use the
+Bun version in `package.json`, frozen dependencies, lint, all workspace type checks and
+uncached tests. A separate Ubuntu job starts disposable local Supabase, applies
+migrations, runs the SQL/RLS tests and compares regenerated, formatted database types
+with the committed file. No hosted Supabase credentials are needed.
+
+See [delivery criteria](docs/definition-of-done.md) and the
+[architecture decision template](docs/adr/template.md). Branch protection must be
+configured separately to require these checks before merging.
