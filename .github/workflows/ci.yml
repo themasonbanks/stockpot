@@ -48,6 +48,12 @@ jobs:
         run: bun run db:types
       - name: Format generated types consistently
         run: bunx --no-install biome format --write packages/database/src/database.types.ts
+      - name: Save generated types for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: database-types
+          path: packages/database/src/database.types.ts
+          retention-days: 7
       - name: Check committed types match the migrated database
         run: git diff --exit-code -- packages/database/src/database.types.ts
       - name: Stop disposable local Supabase
