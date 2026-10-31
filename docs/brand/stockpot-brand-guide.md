@@ -47,7 +47,9 @@ opaque sRGB values; opacity and image overlays require fresh contrast measuremen
 | dangerText | #9C302F | #FFB4A9 | Danger label/icon |
 
 Do not use textSecondary on light surfaceMuted; use textPrimary. Decorative dividers
-cannot substitute for essential control boundaries. Pressed controls keep their fill
+cannot substitute for essential control boundaries. Do not place borderControl directly
+against light surfaceMuted (2.75:1); keep essential controls on surface/background.
+Pressed controls keep their fill
 and gain a visible foreground inset outline. Disabled controls expose disabled state
 and retain readable labels. Prose links are underlined. Keyboard focus uses a 2-point
 action ring separated by a 2-point surface gap.
