@@ -10,6 +10,8 @@ import * as Crypto from "expo-crypto";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Text, View } from "react-native";
 import { Body, Button, Card, Field, Notice, Screen, TextLink, useTheme } from "../ui";
+import { JoinKitchen, ManageInvitations } from "./Invitations";
+import { usePendingInvite } from "./PendingInvite";
 import { detectedTimezone, householdRequestId } from "./request";
 
 type Props = {
@@ -23,6 +25,8 @@ type State =
   | { kind: "create" }
   | { kind: "ready"; household: Household; members: HouseholdMember[]; displayName: string | null };
 export function HouseholdGate({ client, user, onSignOut }: Props) {
+  const invitation = usePendingInvite();
+  const [joining, setJoining] = useState(false);
   const service = useMemo(() => createHouseholdService(client), [client]);
   const [state, setState] = useState<State>({ kind: "loading" });
   const [name, setName] = useState("");
@@ -147,6 +151,13 @@ export function HouseholdGate({ client, user, onSignOut }: Props) {
         <TextLink label="Sign out" onPress={onSignOut} />
       </Screen>
     );
+  if (state.kind === "create" && (joining || invitation.code))
+    return (
+      <Screen title="A kitchen for both of you" subtitle="Use the code from your kitchen owner.">
+        <JoinKitchen client={client} onJoined={load} onCancel={() => setJoining(false)} />
+        <TextLink label="Sign out" onPress={onSignOut} />
+      </Screen>
+    );
   if (state.kind === "create")
     return (
       <Screen
@@ -193,6 +204,7 @@ export function HouseholdGate({ client, user, onSignOut }: Props) {
         </View>
         {error ? <Notice error>{error}</Notice> : null}
         <Button label="Create my kitchen" loading={busy} disabled={!name.trim()} onPress={create} />
+        <TextLink label="I have an invitation code" onPress={() => setJoining(true)} />
         <TextLink label="Sign out" onPress={onSignOut} />
       </Screen>
     );
@@ -239,6 +251,21 @@ export function HouseholdGate({ client, user, onSignOut }: Props) {
             : "Two people, one shared kitchen."}
         </Body>
       </Card>
+      {state.members.some((member) => member.userId === user.id && member.role === "owner") ? (
+        <ManageInvitations
+          client={client}
+          householdId={state.household.id}
+          full={state.members.length >= 2}
+        />
+      ) : null}
+      {invitation.code ? (
+        <Notice>
+          You already belong to a kitchen. Cancel the saved invitation to keep this kitchen.
+        </Notice>
+      ) : null}
+      {invitation.code ? (
+        <TextLink label="Cancel saved invitation" onPress={invitation.clear} />
+      ) : null}
       <Body>Signed in as {user.email}</Body>
       <TextLink label="Sign out" onPress={onSignOut} />
     </Screen>

@@ -143,6 +143,25 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      accept_household_invitation: {
+        Args: { invitation_code: string };
+        Returns: {
+          archived_at: string | null;
+          created_at: string;
+          created_by_user_id: string;
+          default_servings: number;
+          id: string;
+          name: string;
+          timezone: string;
+          updated_at: string;
+        };
+        SetofOptions: {
+          from: "*";
+          to: "households";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       archive_household: {
         Args: { target_household_id: string };
         Returns: undefined;
@@ -171,9 +190,30 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      create_household_invitation: {
+        Args: { target_household_id: string };
+        Returns: {
+          code: string;
+          expires_at: string;
+          id: string;
+        }[];
+      };
       is_household_member: {
         Args: { target_household_id: string };
         Returns: boolean;
+      };
+      list_household_invitations: {
+        Args: { target_household_id: string };
+        Returns: {
+          accepted_at: string;
+          expires_at: string;
+          id: string;
+          revoked_at: string;
+        }[];
+      };
+      revoke_household_invitation: {
+        Args: { target_invitation_id: string };
+        Returns: undefined;
       };
     };
     Enums: {

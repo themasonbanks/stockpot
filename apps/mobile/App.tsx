@@ -1,5 +1,6 @@
 import { AuthBoundary, AuthProvider, useAuth } from "./src/auth";
 import { HouseholdGate } from "./src/household/HouseholdGate";
+import { PendingInviteProvider } from "./src/household/PendingInvite";
 
 function Kitchen() {
   const { client, user, signOut } = useAuth();
@@ -9,10 +10,12 @@ function Kitchen() {
 }
 export default function App() {
   return (
-    <AuthProvider>
-      <AuthBoundary>
-        <Kitchen />
-      </AuthBoundary>
-    </AuthProvider>
+    <PendingInviteProvider>
+      <AuthProvider>
+        <AuthBoundary>
+          <Kitchen />
+        </AuthBoundary>
+      </AuthProvider>
+    </PendingInviteProvider>
   );
 }
