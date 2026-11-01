@@ -1,0 +1,37 @@
+name: Deployment gate probe
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment protection to inspect
+        type: choice
+        required: true
+        options:
+          - production
+          - terraform-production-plan
+          - development
+          - terraform-development-plan
+
+permissions: {}
+
+jobs:
+  validate-target:
+    if: github.repository == 'themasonbanks/stockpot'
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    env:
+      PROBE_ENVIRONMENT: ${{ inputs.environment }}
+    steps:
+      - run: |
+          case "$PROBE_ENVIRONMENT" in
+            production|terraform-production-plan|development|terraform-development-plan) ;;
+            *) exit 64 ;;
+          esac
+  gate:
+    needs: validate-target
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    environment: ${{ inputs.environment }}
+    steps:
+      - run: printf '%s\n' 'Environment gate probe passed its configured protection rules.'

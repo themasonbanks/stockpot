@@ -1,0 +1,9 @@
+# Deployment gate probe
+
+This manually dispatched workflow inspects GitHub environment protection without application code, repository checkout, secret references, cloud authentication, artifacts or deployment commands. permissions is an empty map. The target is restricted to the four reviewed environment names before the gated job can run, and the workflow runs only in themasonbanks/stockpot. The gated step prints one fixed line if GitHub permits it; it does not deploy an application.
+
+After this workflow is reviewed and merged, dispatch it on a temporary feature branch targeting production and terraform-production-plan. Their main-only policies should reject the gated job before its step runs. Dispatch on main to verify the job waits for the required reviewer. Inspect the pending-deployments API for required reviewer and whether the initiating identity may approve; inspect stored environment controls for prevent_self_review and can_admins_bypass. Do not call approval/bypass APIs to test them. Cancel pending probes without approving a production release.
+
+The current agent CLI authenticates as themasonbanks. That identity is also the required reviewer, so self-review prevention intentionally prevents it from approving its own probe. A separately approved automation identity is needed for the complete owner-reviewed deployment flow. Never weaken the configured controls to finish a probe.
+
+Record the exact workflow run/head/environment, branch rejection or pending-review evidence and cancellation in the platform issue. Native gate results establish only GitHub protection behavior; AWS OIDC trust, IAM permissions, Terraform state isolation, actual deployment and phone access remain separate live acceptance requirements. No cloud credentials should be attached to this probe. It is manual-only and does not run on pushes or pull requests.
