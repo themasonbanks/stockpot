@@ -8,6 +8,10 @@
     "services/*"
   ],
   "scripts": {
+    "local:setup": "bun scripts/local-cli.ts setup",
+    "local:preview": "bun scripts/local-cli.ts preview",
+    "local:api": "bun scripts/local-cli.ts api",
+    "local:status": "bun scripts/local-cli.ts status",
     "dev": "turbo dev",
     "dev:mobile": "turbo dev --filter=@stockpot/mobile",
     "dev:api": "turbo dev --filter=@stockpot/api",
@@ -17,15 +21,17 @@
     "format:check": "biome format .",
     "db:test": "supabase test db",
     "db:types": "bun scripts/generate-database-types.ts",
-    "typecheck": "turbo typecheck",
+    "typecheck": "bun run typecheck:scripts && turbo typecheck",
+    "typecheck:scripts": "tsc --project tsconfig.scripts.json",
     "test:scripts": "bun test scripts",
     "test:e2e": "playwright test"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.2",
+    "@playwright/test": "^1.56.1",
+    "@types/bun": "^1.2.22",
     "supabase": "^2.113.0",
     "turbo": "^2.5.6",
-    "typescript": "^5.9.2",
-    "@playwright/test": "^1.56.1"
+    "typescript": "^5.9.2"
   }
 }

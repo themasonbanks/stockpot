@@ -1,10 +1,14 @@
-import { app } from "./app";
+import { createApp } from "./app";
+import { readDependencyConfig, readListenConfig } from "./config";
+import { createReadinessCheck } from "./readiness";
 
-const port = Number(Bun.env.API_PORT ?? 3000);
+const { port, hostname } = readListenConfig(Bun.env);
+const app = createApp({ readiness: createReadinessCheck(readDependencyConfig(Bun.env)) });
 
 export default {
   fetch: app.fetch,
   port,
+  hostname,
 };
 
-console.log(`Stockpot API listening on http://localhost:${port}`);
+console.log(`Stockpot API listening on port ${port}`);

@@ -42,6 +42,8 @@ jobs:
       - run: bun install --frozen-lockfile
       - name: Start disposable local Supabase
         run: bunx --no-install supabase start
+      - name: Verify repeatable local setup without resetting data
+        run: bun run local:setup
       - name: Test migrations and row-level security
         run: bun run db:test
       - name: Generate database types

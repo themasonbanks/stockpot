@@ -81,6 +81,12 @@ stockpot/
 
 ### Setup
 
+For the working local app, run `bun install --frozen-lockfile` then
+`bun run local:preview` with Docker running. Existing local kitchens are preserved.
+Use `bun run local:api` separately for the Hono runtime. See
+[local runtime instructions](docs/local-runtime.md) and the
+[v1 architecture boundaries](docs/adr/001-v1-service-and-runtime-boundaries.md).
+
 ```sh
 git clone https://github.com/themasonbanks/stockpot.git
 cd stockpot
