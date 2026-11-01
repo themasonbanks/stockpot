@@ -19,7 +19,7 @@ port = 54323
 [auth]
 enabled = true
 site_url = "http://127.0.0.1:8081"
-additional_redirect_urls = ["exp://127.0.0.1:8081"]
+additional_redirect_urls = ["stockpot://auth/callback", "stockpot://auth/recovery", "http://localhost:8081/auth/callback", "http://localhost:8081/auth/recovery", "http://127.0.0.1:8081/auth/callback", "http://127.0.0.1:8081/auth/recovery"]
 jwt_expiry = 3600
 enable_signup = true
 

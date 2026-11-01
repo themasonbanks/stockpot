@@ -88,3 +88,7 @@ supabase/.temp/
 # Timestamped Vite configs
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Browser test output
+playwright-report/
+test-results/
