@@ -13,7 +13,8 @@ import {
 import { ActivityIndicator, AppState } from "react-native";
 import { createAuthRuntime, type MobileClient } from "../lib/supabase";
 import { Button, Field, Notice, Screen, TextLink } from "../ui";
-import { AuthController, type AuthState } from "./controller";
+import { AuthController, type AuthState, LINK_ERROR } from "./controller";
+import { parseAuthLink } from "./links";
 
 type AuthContextValue = AuthState & {
   client: MobileClient | null;
@@ -32,6 +33,14 @@ export function useAuth() {
   const value = useContext(AuthContext);
   if (!value) throw new Error("useAuth needs AuthProvider");
   return value;
+}
+function clearAuthCallbackAddress() {
+  if (
+    typeof window !== "undefined" &&
+    window.location?.href &&
+    parseAuthLink(window.location.href).kind !== "ignore"
+  )
+    window.history.replaceState(null, "", "/");
 }
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [controller, setController] = useState<AuthController | null>(null);
@@ -76,6 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             await auth.handleLink(url);
             if (!active) return;
           }
+          if (auth.getSnapshot().status !== "error") clearAuthCallbackAddress();
           initialized = true;
           setBootComplete(true);
         } catch {
@@ -118,7 +128,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       requestReset: (email) => controller?.requestReset(email) ?? Promise.resolve(null),
       resendVerification: (email) => controller?.resendVerification(email) ?? Promise.resolve(null),
       updatePassword: (password) => controller?.updatePassword(password) ?? Promise.resolve(false),
-      signOut: () => controller?.signOut() ?? Promise.resolve(false),
+      signOut: async () => {
+        const ok = await (controller?.signOut() ?? Promise.resolve(false));
+        if (ok) clearAuthCallbackAddress();
+        return ok;
+      },
       retry: async () => {
         if (configurationError || !controller) setAttempt((v) => v + 1);
         else await controller.retry();
@@ -140,7 +154,9 @@ export function AuthBoundary({ children }: { children: ReactNode }) {
     return (
       <Screen title="Let’s reconnect">
         <Notice error>{auth.error}</Notice>
-        <Button label="Retry" onPress={auth.retry} loading={auth.busy} />
+        {auth.error !== LINK_ERROR ? (
+          <Button label="Retry" onPress={auth.retry} loading={auth.busy} />
+        ) : null}
         {auth.client ? (
           <Button label="Back to sign in" secondary onPress={auth.signOut} loading={auth.busy} />
         ) : null}

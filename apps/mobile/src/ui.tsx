@@ -61,15 +61,17 @@ export function Screen({
   title,
   subtitle,
   eyebrow,
+  step,
 }: {
   children: ReactNode;
   title: string;
   subtitle?: string;
   eyebrow?: string;
+  step?: string;
 }) {
   const t = useTheme();
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: t.background }}>
+    <SafeAreaView testID={step} style={{ flex: 1, backgroundColor: t.background }}>
       <StatusBar style="auto" />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -168,13 +170,21 @@ export function Notice({ children, error }: { children: ReactNode; error?: boole
 export function TextLink({
   label,
   onPress,
+  disabled,
 }: {
   label: string;
+  disabled?: boolean;
   onPress: () => unknown | Promise<unknown>;
 }) {
   const t = useTheme();
   return (
-    <Pressable accessibilityRole="button" onPress={onPress} style={styles.link}>
+    <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ disabled: !!disabled }}
+      disabled={disabled}
+      onPress={onPress}
+      style={styles.link}
+    >
       <Text style={[styles.linkLabel, { color: t.action }]}>{label}</Text>
     </Pressable>
   );

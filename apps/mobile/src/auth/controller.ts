@@ -10,7 +10,7 @@ export type AuthState = {
   busy: boolean;
 };
 const GATE_KEY = "stockpot.auth.gate";
-const LINK_ERROR =
+export const LINK_ERROR =
   "This sign-in link is invalid or has expired. Request a new email on this device.";
 const REQUEST_MESSAGE =
   "If this address can be used, you will receive an email with the next steps. Open it on this device.";
@@ -150,10 +150,13 @@ export class AuthController {
       if (link.recovery) await this.storage.setItem(GATE_KEY, "recovery");
       if (!this.active || lifecycle !== this.lifecycle) return;
       if (link.kind === "invalid") throw new Error("Invalid link");
-      this.consumedCodes.add(link.code);
-      const { data, error } = await this.client.auth.exchangeCodeForSession(link.code);
+      const { data, error } = await this.client.auth.exchangeCodeForSession(
+        link.code,
+        link.flowId ? { flowId: link.flowId } : undefined,
+      );
       if (!this.active || lifecycle !== this.lifecycle) return;
       if (error || !data.session) throw new Error("Link exchange failed");
+      this.consumedCodes.add(link.code);
       this.latestSession = data.session;
       this.processingLink = false;
       this.settle();

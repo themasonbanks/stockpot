@@ -15,7 +15,7 @@ export default defineConfig({
     command: "bun run --cwd apps/mobile web --port 8081",
     url: "http://127.0.0.1:8081",
     timeout: 120000,
-    reuseExistingServer: false,
+    reuseExistingServer: !process.env.CI,
     env: { CI: "1", EXPO_NO_TELEMETRY: "1" },
   },
 });

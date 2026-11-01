@@ -180,3 +180,16 @@ describe("authentication gates", () => {
     expect(f.controller.getSnapshot().status).toBe("signedOut");
   });
 });
+
+test("passes the callback flow ID to the SDK verifier slot", async () => {
+  const f = fixture();
+  const original = f.client.auth.exchangeCodeForSession.bind(f.client.auth);
+  let received: string | undefined;
+  f.client.auth.exchangeCodeForSession = async (code, options) => {
+    received = options?.flowId;
+    return original(code, options);
+  };
+  await f.controller.start("stockpot://auth/recovery?code=one&sb_flow_id=flow_valid123");
+  expect(received).toBe("flow_valid123");
+  expect(f.controller.getSnapshot().status).toBe("recovery");
+});

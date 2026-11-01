@@ -9,8 +9,9 @@ import type { Household, HouseholdMember } from "@stockpot/domain";
 import * as Crypto from "expo-crypto";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Text, View } from "react-native";
-import { Body, Button, Card, Field, Notice, Screen, TextLink, useTheme } from "../ui";
-import { JoinKitchen, ManageInvitations } from "./Invitations";
+import { SetupExperience } from "../onboarding/SetupExperience";
+import { Body, Button, Field, Notice, Screen, TextLink, useTheme } from "../ui";
+import { JoinKitchen } from "./Invitations";
 import { usePendingInvite } from "./PendingInvite";
 import { detectedTimezone, householdRequestId } from "./request";
 
@@ -229,45 +230,15 @@ export function HouseholdGate({ client, user, onSignOut }: Props) {
       </Screen>
     );
   return (
-    <Screen
-      eyebrow={state.household.name}
-      title={`Welcome home, ${state.displayName}.`}
-      subtitle="A little less planning. A lot more good food."
-    >
-      <Card>
-        <Text
-          accessibilityRole="header"
-          style={{ color: t.textPrimary, fontSize: 22, lineHeight: 28, fontWeight: "600" }}
-        >
-          Your kitchen is ready
-        </Text>
-        <Body>
-          {state.household.defaultServings === 1 ? "Dinner for one" : "Dinner for two"} ·{" "}
-          {state.household.timezone}
-        </Body>
-        <Body>
-          {state.members.length === 1
-            ? "Just you for now. Your kitchen can be shared with one other person."
-            : "Two people, one shared kitchen."}
-        </Body>
-      </Card>
-      {state.members.some((member) => member.userId === user.id && member.role === "owner") ? (
-        <ManageInvitations
-          client={client}
-          householdId={state.household.id}
-          full={state.members.length >= 2}
-        />
-      ) : null}
-      {invitation.code ? (
-        <Notice>
-          You already belong to a kitchen. Cancel the saved invitation to keep this kitchen.
-        </Notice>
-      ) : null}
-      {invitation.code ? (
-        <TextLink label="Cancel saved invitation" onPress={invitation.clear} />
-      ) : null}
-      <Body>Signed in as {user.email}</Body>
-      <TextLink label="Sign out" onPress={onSignOut} />
-    </Screen>
+    <SetupExperience
+      key={state.household.id}
+      client={client}
+      user={user}
+      household={state.household}
+      members={state.members}
+      displayName={state.displayName}
+      onSignOut={onSignOut}
+      onRefresh={load}
+    />
   );
 }

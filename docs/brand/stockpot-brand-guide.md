@@ -206,7 +206,7 @@ or provenance. Colour, haptics and animation are reinforcing cues, never the onl
 > targets. Flag missing material decisions; do not silently invent a new visual system.
 > Automate the admin, surface the decisions.
 
-Next: record token/font/icon adoption or revisions; compare a representative light/dark
-screen with the concept board; implement central tokens/components and verify native
-font fallback. KEB-20 has a repository deliverable here, while exact design choices and
-rendered/native validation remain explicitly proposed or outstanding.
+The semantic palette and native system-font fallback are adopted for this implementation.
+Representative light/dark browser screens have been rendered and inspected. Comparison
+with the concept board, bundled Fraunces/Inter/Lucide assets and native font/accessibility
+checks remain outstanding; these are distinct from the adopted initial fallback system.

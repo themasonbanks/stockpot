@@ -42,7 +42,14 @@ export function createInvitationService(client: SupabaseClient<Database>) {
   async function safe<T>(operation: () => Promise<Result<T>>): Promise<Result<T>> {
     try {
       const { data, error } = await client.auth.getUser();
-      if (error || !data.user) return fail("unauthenticated", "Sign in to continue.");
+      if (error)
+        return fail(
+          error.status === 401 || error.status === 403 || error.name === "AuthSessionMissingError"
+            ? "unauthenticated"
+            : "unavailable",
+          "Your sign-in couldn’t be checked. Please retry.",
+        );
+      if (!data.user) return fail("unauthenticated", "Sign in to continue.");
       return await operation();
     } catch {
       return fail("unavailable", "We couldn’t connect. Please retry.");

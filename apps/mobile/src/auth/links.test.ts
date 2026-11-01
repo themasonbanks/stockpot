@@ -41,3 +41,17 @@ test("rejects ambiguous, token-bearing and failed links", () => {
   ])
     expect(parseAuthLink(url).kind).toBe("invalid");
 });
+
+test("retains explicit verifier slots and rejects ambiguous flow IDs", () => {
+  expect(parseAuthLink("stockpot://auth/recovery?code=one&sb_flow_id=valid_123")).toEqual({
+    kind: "code",
+    code: "one",
+    recovery: true,
+    flowId: "valid_123",
+  });
+  expect(parseAuthLink("stockpot://auth/recovery?code=one&sb_flow_id=bad").kind).toBe("invalid");
+  expect(
+    parseAuthLink("stockpot://auth/recovery?code=one&sb_flow_id=valid_123&sb_flow_id=valid_456")
+      .kind,
+  ).toBe("invalid");
+});

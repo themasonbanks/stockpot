@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 
 const api = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const admin = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -18,6 +18,30 @@ async function createAccount() {
   });
   if (!response.ok) throw new Error(`Could not prepare local test account (${response.status})`);
   return email;
+}
+async function finishPersonal(page: Page, testResume = false) {
+  await expect(page.getByText("What must we leave out?")).toBeVisible();
+  await page.getByLabel("Allergies (comma separated)").fill("peanuts");
+  await page
+    .getByRole("checkbox", { name: "I’ve checked my allergies and dietary requirements" })
+    .click();
+  await page.getByRole("button", { name: "Continue to preferences" }).click();
+  await expect(page.getByText("Make dinner feel like you.")).toBeVisible();
+  if (testResume) {
+    await page.reload();
+    await expect(page.getByText("Make dinner feel like you.")).toBeVisible();
+  }
+  await page.getByLabel("Maximum cooking time (minutes)").fill("0");
+  await page.getByRole("button", { name: "Back to dietary requirements" }).click();
+  await expect(page.getByText("Make dinner feel like you.")).toBeVisible();
+  await expect(page.getByText("Choose a cooking time between 5 and 240 minutes.")).toBeVisible();
+  await page.getByLabel("Maximum cooking time (minutes)").fill("45");
+  await page.getByRole("button", { name: "Save my food preferences" }).click();
+}
+async function finishKitchen(page: Page) {
+  await expect(page.getByText("A rhythm that works for you.")).toBeVisible();
+  await page.getByRole("checkbox", { name: "Microwave", exact: true }).click();
+  await page.getByRole("button", { name: "Finish kitchen setup" }).click();
 }
 test("sign in, create a kitchen, restore it, and isolate the next account", async ({ page }) => {
   const email = await createAccount();
@@ -50,14 +74,23 @@ test("sign in, create a kitchen, restore it, and isolate the next account", asyn
   await expect(page.getByText("What should we call you?")).toBeVisible();
   await page.getByLabel("Your name").fill("Alex");
   await page.getByRole("button", { name: "Continue to my kitchen" }).click();
+  await finishPersonal(page, true);
+  await finishKitchen(page);
   await expect(page.getByText("Welcome home, Alex.")).toBeVisible();
   await page.reload();
   await expect(page.getByText("Welcome home, Alex.")).toBeVisible();
   await page.screenshot({ path: "test-results/kitchen-light.png", fullPage: true });
   await page.emulateMedia({ colorScheme: "dark" });
   await page.screenshot({ path: "test-results/kitchen-dark.png", fullPage: true });
-  await page.getByRole("button", { name: "Sign out", exact: true }).click();
+  await page.getByRole("button", { name: "Edit kitchen settings", exact: true }).click();
+  await page.getByLabel("Equipment note (optional)").fill("Shared hob and oven");
+  await page.getByRole("button", { name: "Save and sign out", exact: true }).click();
   await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeVisible();
+  await page.getByLabel("Email", { exact: true }).fill(email);
+  await page.getByLabel("Password", { exact: true }).fill(password);
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  await expect(page.getByText("Welcome home, Alex.")).toBeVisible();
+  await page.getByRole("button", { name: "Sign out", exact: true }).click();
   const secondEmail = await createAccount();
   await page.getByLabel("Email", { exact: true }).fill(secondEmail);
   await page.getByLabel("Password", { exact: true }).fill(password);
@@ -180,4 +213,68 @@ test("signed-out invite persists through authentication and joins once", async (
   await expect(page.getByText("What should we call you?")).toBeVisible();
   await page.reload();
   await expect(page.getByText("What should we call you?")).toBeVisible();
+});
+
+test("callback refresh restores the session without reusing a one-time code", async ({ page }) => {
+  if (!api) throw new Error("Missing local test API");
+  const flowId = "flow_valid_123",
+    storageKey = `sb-${new URL(api).hostname.split(".")[0]}-auth-token`;
+  const user = {
+    id: crypto.randomUUID(),
+    email: "callback@example.com",
+    aud: "authenticated",
+    role: "authenticated",
+    app_metadata: {},
+    user_metadata: {},
+    created_at: new Date().toISOString(),
+  };
+  const payload = {
+    sub: user.id,
+    aud: "authenticated",
+    role: "authenticated",
+    exp: Math.floor(Date.now() / 1000) + 3600,
+  };
+  const token = `${Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64url")}.${Buffer.from(JSON.stringify(payload)).toString("base64url")}.test-signature`;
+  await page.addInitScript(
+    ({ key, flow }) => {
+      if (!sessionStorage.getItem(`${key}-flow-${flow}-code-verifier`))
+        sessionStorage.setItem(`${key}-flow-${flow}-code-verifier`, JSON.stringify("v".repeat(64)));
+    },
+    { key: storageKey, flow: flowId },
+  );
+  const headers = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "*" };
+  let exchanges = 0;
+  await page.route("**/auth/v1/token?grant_type=pkce", async (route) => {
+    if (route.request().method() === "OPTIONS") {
+      await route.fulfill({ status: 204, headers });
+      return;
+    }
+    exchanges++;
+    await route.fulfill({
+      status: exchanges === 1 ? 200 : 400,
+      headers,
+      json:
+        exchanges === 1
+          ? {
+              access_token: token,
+              refresh_token: "test-refresh",
+              expires_in: 3600,
+              token_type: "bearer",
+              user,
+            }
+          : { error: "invalid_grant" },
+    });
+  });
+  await page.route("**/auth/v1/user", (route) =>
+    route.fulfill({ status: 200, headers, json: user }),
+  );
+  await page.route("**/rest/v1/household_members?**", (route) =>
+    route.fulfill({ status: 200, headers, json: [] }),
+  );
+  await page.goto(`/auth/callback?code=one-use-code&sb_flow_id=${flowId}`);
+  await expect(page.getByText("Good food starts at home.")).toBeVisible();
+  await expect(page).toHaveURL("http://127.0.0.1:8081/");
+  await page.reload();
+  await expect(page.getByText("Good food starts at home.")).toBeVisible();
+  expect(exchanges).toBe(1);
 });

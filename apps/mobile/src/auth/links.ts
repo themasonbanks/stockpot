@@ -3,7 +3,7 @@ export const AUTH_RECOVERY_URL = "stockpot://auth/recovery";
 export type AuthLink =
   | { kind: "ignore" }
   | { kind: "invalid"; recovery: boolean }
-  | { kind: "code"; code: string; recovery: boolean };
+  | { kind: "code"; code: string; recovery: boolean; flowId?: string };
 export function parseAuthLink(input: string | null): AuthLink {
   if (!input) return { kind: "ignore" };
   let url: URL;
@@ -30,12 +30,16 @@ export function parseAuthLink(input: string | null): AuthLink {
     !["/callback", "/recovery"].includes(path) ||
     ["error", "error_code", "error_description"].some((key) => url.searchParams.has(key)) ||
     url.searchParams.getAll("code").length !== 1 ||
-    url.searchParams.getAll("type").length > 1
+    url.searchParams.getAll("type").length > 1 ||
+    url.searchParams.getAll("sb_flow_id").length > 1
   )
     return { kind: "invalid", recovery };
   const type = url.searchParams.get("type"),
     code = url.searchParams.get("code") ?? "";
   if ((type && !["signup", "recovery"].includes(type)) || !/^[a-zA-Z0-9_-]{1,2048}$/.test(code))
     return { kind: "invalid", recovery };
-  return { kind: "code", code, recovery };
+  const flowId = url.searchParams.get("sb_flow_id");
+  if (flowId !== null && !/^[a-zA-Z0-9_-]{8,64}$/.test(flowId))
+    return { kind: "invalid", recovery };
+  return { kind: "code", code, recovery, ...(flowId ? { flowId } : {}) };
 }

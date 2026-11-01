@@ -6,4 +6,5 @@ export {
   type HouseholdInvitation,
   type InvitationMetadata,
 } from "./invitations";
+export { createPreferencesService } from "./preferences";
 export { createMobileSupabaseClient, createServerSupabaseClient } from "./supabase";
