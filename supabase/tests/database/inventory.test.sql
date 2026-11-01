@@ -19,7 +19,7 @@ select is((select lot->>'version' from inventory_fixture),'1','initial version')
 select is(jsonb_array_length(public.list_inventory_lots('80000000-0000-0000-0000-000000000001')),1,'household sees lot');
 select is((select public.add_inventory_lot('80000000-0000-0000-0000-000000000001',payload)->>'id' from inventory_fixture),(select lot->>'id' from inventory_fixture),'same request safely replays');
 select is((select count(*) from public.inventory_transactions)::integer,1,'retry creates no duplicate ledger');
-select throws_ok($$select public.add_inventory_lot('80000000-0000-0000-0000-000000000001',payload||'{"quantity":1}') from inventory_fixture$$,'40001',null,'same request different payload rejected');
+select throws_ok($$select public.add_inventory_lot('80000000-0000-0000-0000-000000000001',payload||'{"quantity":1}') from inventory_fixture$$,'PT409',null,'same request different payload rejected');
 select throws_ok($$insert into public.inventory_lots(id) values(gen_random_uuid())$$,'42501',null,'direct lot insert forbidden');
 select throws_ok($$update public.inventory_lots set confidence='estimated'$$,'42501',null,'direct lot update forbidden');
 select throws_ok($$insert into public.inventory_transactions(id) values(gen_random_uuid())$$,'42501',null,'direct ledger insert forbidden');
@@ -35,13 +35,13 @@ select throws_ok($$select public.add_inventory_lot('80000000-0000-0000-0000-0000
 select is((select count(*) from public.inventory_transactions)::integer,1,'invalid attempts have no ledger effects');
 set local request.jwt.claims='{"sub":"00000000-0000-0000-0000-000000000052","role":"authenticated"}';
 select is(jsonb_array_length(public.list_inventory_lots('80000000-0000-0000-0000-000000000001')),1,'second member reads same stock');
-select throws_ok($$select public.add_inventory_lot('80000000-0000-0000-0000-000000000001',payload) from inventory_fixture$$,'40001',null,'another member cannot replay caller request');
+select throws_ok($$select public.add_inventory_lot('80000000-0000-0000-0000-000000000001',payload) from inventory_fixture$$,'PT409',null,'another member cannot replay caller request');
 update inventory_fixture set lot=public.adjust_inventory_lot('80000000-0000-0000-0000-000000000001',jsonb_build_object('requestId','90000000-0000-0000-0000-000000000003','lotId',lot->>'id','expectedVersion',1,'quantityBase',300,'confidence','estimated','reason','Used some elsewhere'));
 select is((select (lot->>'quantityBase')::numeric from inventory_fixture),300::numeric,'correction sets requested absolute remaining stock');
 select is((select (lot->>'originalQuantityBase')::numeric from inventory_fixture),500::numeric,'original quantity preserved');
 select is((select quantity_delta_base from public.inventory_transactions where source_type='manual_adjustment'),(-200)::numeric,'correction writes delta instead of rewriting stock');
 select is((select actor_user_id from public.inventory_transactions where source_type='manual_adjustment'),'00000000-0000-0000-0000-000000000052'::uuid,'actor is caller not owner');
-select throws_ok($$select public.adjust_inventory_lot('80000000-0000-0000-0000-000000000001',jsonb_build_object('requestId','90000000-0000-0000-0000-000000000004','lotId',lot->>'id','expectedVersion',1,'quantityBase',100,'confidence','confirmed','reason','Stale correction')) from inventory_fixture$$,'40001',null,'stale correction cannot overwrite newer stock');
+select throws_ok($$select public.adjust_inventory_lot('80000000-0000-0000-0000-000000000001',jsonb_build_object('requestId','90000000-0000-0000-0000-000000000004','lotId',lot->>'id','expectedVersion',1,'quantityBase',100,'confidence','confirmed','reason','Stale correction')) from inventory_fixture$$,'PT409',null,'stale correction cannot overwrite newer stock');
 update inventory_fixture set lot=public.freeze_inventory_lot('80000000-0000-0000-0000-000000000001',jsonb_build_object('requestId','90000000-0000-0000-0000-000000000005','lotId',lot->>'id','expectedVersion',2));
 select is((select lot->>'storageLocation' from inventory_fixture),'freezer','explicit freezing moves location');
 select ok((select lot->>'frozenAt' is not null from inventory_fixture),'freeze time recorded');

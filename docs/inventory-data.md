@@ -21,7 +21,10 @@ uncertain response. Private request records bind household, actor, operation and
 full JSON payload and retain the committed response. Replays return that response,
 not a new mutation; payload or actor changes conflict. A replay can contain an older
 lot version, so refresh the list after success. Corrections with a stale version
-conflict rather than overwriting another member's work.
+conflict rather than overwriting another member's work. Business conflicts use
+`PT409` (HTTP 409); `40001` is reserved for genuine database serialization failures,
+which PostgREST may retry. Migration backfills old committed replay snapshots with
+their immutable original confidence while preserving their quantities and versions.
 
 Mutation RPCs perform a real parent household row update before checking active
 membership. This serializes writes with membership/archive lifecycle changes;

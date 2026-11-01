@@ -30,7 +30,7 @@ const failure = <T>(
 function databaseFailure<T>(error: { code?: string }): Result<T> {
   if (error.code === "42501")
     return failure("forbidden", "This kitchen item isn’t available to this account.");
-  if (["40001", "40P01", "23505"].includes(error.code ?? ""))
+  if (["PT409", "40001", "40P01", "23505"].includes(error.code ?? ""))
     return failure(
       "conflict",
       "This item changed. Refresh your kitchen before making another correction.",

@@ -36,7 +36,7 @@ test("unauthenticated and invalid inputs never reach inventory RPCs", async () =
   expect(b.calls).toHaveLength(0);
 });
 test("database conflicts are typed with no raw diagnostics leakage", async () => {
-  const { service } = fixture(null, { code: "40001" });
+  const { service } = fixture(null, { code: "PT409" });
   const result = await service.freezeLot(id, { requestId: id, lotId: id, expectedVersion: 1 });
   expect(result).toMatchObject({ ok: false, error: { code: "conflict" } });
 });
