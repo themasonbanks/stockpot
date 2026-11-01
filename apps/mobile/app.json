@@ -11,6 +11,12 @@
     },
     "android": {
       "package": "com.themasonbanks.stockpot"
+    },
+    "scheme": "stockpot",
+    "plugins": ["expo-secure-store"],
+    "web": {
+      "bundler": "metro",
+      "name": "Stockpot"
     }
   }
 }

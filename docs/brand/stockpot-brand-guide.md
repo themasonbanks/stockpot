@@ -1,9 +1,11 @@
 # Stockpot brand and interface guide
 
-Status: proposed implementation specification for KEB-20. The direction below comes
-from Linear; exact tokens, font adoption and icon family are proposed design decisions.
-Record adoption or revisions here before calling these values approved. No application
-styles or dependencies are changed by this guide.
+Status: implementation baseline adopted by the project lead on 1 November 2026 under
+the user's authorization to handle routine product decisions. Semantic tokens, component
+rules and native system-font fallbacks below govern the initial app. Fraunces/Inter and
+Lucide remain the selected direction for a future bundled-font/icon pass; native system
+fonts are the documented fallback for this release. This records implementation adoption,
+not an assertion that the user separately approved each exact value.
 
 ## Sources and intent
 
@@ -20,7 +22,7 @@ specification; comparison with its embedded image remains outstanding.
 The proposition is meal-kit convenience using food and supermarkets people already
 use. Pantry tracking supports that promise. **Automate the admin, surface the decisions.**
 
-## Proposed colour system
+## colour system
 
 Components use central semantic tokens, never screen-specific hex values. These are
 opaque sRGB values; opacity and image overlays require fresh contrast measurements.
@@ -69,7 +71,7 @@ source in visible copy and accessibility labels:
 Never extend a confirmed use-by date with estimates. Never conflate best-before and
 use-by. Keep expiry contextual within meal/inventory information. Today centres on dinner.
 
-## Proposed typography
+## typography
 
 Retain concept direction: Fraunces 600 for display/headings; Inter for body/UI. Bundle
 fonts if adopted; verify native loading and use explicit static weights before variable
@@ -95,7 +97,7 @@ system sans on Android). Preserve hierarchy, without inventing a replacement ser
 Web: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif. Font-loading
 failure leaves a usable UI.
 
-## Proposed iconography and imagery
+## iconography and imagery
 
 Use Lucide outline consistently: 24-point icons, 2-point stroke; 20 for metadata and
 28 for prominent empty states. Adding its package is a separate implementation task.
@@ -121,7 +123,7 @@ surface/scrim; gradients alone do not establish contrast. Missing photo: surface
 CookingPot and the recipe title, never an unrelated meal. Hide decorative images from
 screen readers when adjacent text already conveys the meaning. Avoid generic decoration.
 
-## Proposed component rules
+## component rules
 
 Spacing: 4, 8, 12, 16, 24, 32, 48 points. Screen gutter 20; card padding 16; section gap 24.
 Radii: button/input 12, card 16, sheet top 24, pill/avatar 999. Borders: 1 point.
@@ -197,7 +199,7 @@ or provenance. Colour, haptics and animation are reinforcing cues, never the onl
 ## Agent context and adoption
 
 > Use Stockpot's adopted semantic tokens and existing components. These proposed exact
-> values need a recorded adoption decision before being called approved. Keep colour,
+> values are adopted for the initial implementation. Keep colour,
 > font and radius changes central. Preserve the five destinations, food-led presentation
 > and contextual expiry. Distinguish estimates from confirmed information. Reuse
 > components before variants. Check light/dark, large text, screen readers and 48-point
