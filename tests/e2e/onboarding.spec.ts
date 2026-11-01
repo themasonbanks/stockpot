@@ -30,16 +30,20 @@ test("sign in, create a kitchen, restore it, and isolate the next account", asyn
   await page.getByLabel("Timezone").fill("Europe/London");
   // Server commits, but the response is lost: reload must recover the same household.
   let dropped = false;
+  let committed = false;
   await page.route("**/rest/v1/rpc/create_household", async (route) => {
     if (dropped) {
       await route.continue();
       return;
     }
     dropped = true;
-    await route.fetch();
+    const response = await route.fetch();
+    expect(response.status()).toBe(200);
+    committed = true;
     await route.abort("failed");
   });
   await page.getByRole("button", { name: "Create my kitchen" }).click();
+  await expect.poll(() => committed).toBe(true);
   await expect(page.getByLabel("Kitchen name")).toHaveValue("The shared kitchen");
   await page.unroute("**/rest/v1/rpc/create_household");
   await page.reload();
@@ -121,6 +125,7 @@ test("two recipients racing one invitation create only one membership", async ()
     `${api}/rest/v1/household_members?household_id=eq.${f.household}&archived_at=is.null&select=id`,
     { headers: { apikey: admin ?? "", Authorization: `Bearer ${admin}` } },
   );
+  expect(members.status).toBe(200);
   expect((await members.json()).length).toBe(2);
 });
 test("same recipient concurrent retries are idempotent", async () => {
@@ -160,6 +165,7 @@ test("accept racing archival never leaves an active member in archived kitchen",
     `${api}/rest/v1/household_members?household_id=eq.${f.household}&archived_at=is.null&select=id`,
     { headers: { apikey: admin ?? "", Authorization: `Bearer ${admin}` } },
   );
+  expect(members.status).toBe(200);
   expect((await members.json()).length).toBe(0);
 });
 test("signed-out invite persists through authentication and joins once", async ({ page }) => {

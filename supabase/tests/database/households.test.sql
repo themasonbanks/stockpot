@@ -1,5 +1,6 @@
 begin;
 select no_plan();
+select ok(has_table_privilege('service_role', 'public.household_members', 'SELECT'), 'trusted backend can inspect memberships');
 
 insert into auth.users(id, raw_user_meta_data)
 select ('00000000-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid, '{}'
