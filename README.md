@@ -35,8 +35,8 @@ Stockpot is a Bun-managed TypeScript monorepo orchestrated by Turborepo.
 
 - `apps/mobile` contains the Expo and React Native client.
 - `services/api` contains the Hono API running on Bun. It is the future boundary for mobile and MCP-facing capabilities.
-- `packages/domain` contains framework-independent household and onboarding types, validation and local-date rules.
-- `packages/database` contains generated Supabase contracts and typed household, invitation and preference services.
+- `packages/domain` contains framework-independent household, onboarding and inventory rules.
+- `packages/database` contains generated Supabase contracts and typed household, invitation, preference and inventory services.
 - `packages/planner` is reserved for meal-planning capabilities.
 - `packages/shared` is reserved for genuinely cross-cutting TypeScript utilities and contracts.
 - `supabase` contains local Supabase configuration, migrations, and Edge Functions.
@@ -75,7 +75,7 @@ stockpot/
 
 ### Prerequisites
 
-- Bun 1.2 or later
+- Bun 1.3.14 (pinned in `package.json`)
 - A simulator or Expo Go-compatible device for mobile development
 - Docker and the Supabase CLI when running the local Supabase stack
 
@@ -114,10 +114,10 @@ supabase start
 supabase stop
 ```
 
-Apply migrations and run the database policy tests with:
+Apply forward migrations while preserving existing local kitchens, then run the database policy tests:
 
 ```sh
-supabase db reset
+supabase migration up --local
 bun run db:test
 ```
 
@@ -144,7 +144,7 @@ names are trimmed and capped at 80 characters; blank names remain unset.
 | `bun run format` | Format source files with Biome |
 | `bun run format:check` | Verify formatting without changing files |
 | `bun run typecheck` | Type-check every workspace |
-| `bun run test:e2e` | Exercise onboarding against disposable local Supabase |
+| `bun run test:e2e` | Exercise onboarding and Kitchen against disposable local Supabase |
 
 ## MVP status
 
@@ -153,10 +153,14 @@ household creation and invitations, private food preferences, shared planning/eq
 and resumable onboarding. The light/dark mobile UI uses the documented semantic design
 system. See [mobile setup and validation](docs/mobile-onboarding.md).
 
-The kitchen inventory ledger, expiry-aware stocktake, recipe library, meal-planning
-engine, shopping, receipt scanning, cooking/consumption and MCP remain the next product
-work. The app does not fabricate inventory or planned dinners. Native device acceptance
-still requires a configured Supabase project and a Stockpot development build.
+The Kitchen now supports a starter ingredient catalogue, manual additions, storage views,
+per-lot confirmed or estimated dates, quantity corrections, explicit freezing and immutable
+stock history. Interrupted saves retain their request across restarts and safely retry.
+See [inventory rules and boundaries](docs/inventory-data.md).
+
+Photo-first onboarding stocktake, recipe library, meal planning, shopping, receipt scanning,
+cooking/consumption and MCP remain future work. The app does not fabricate stock or dinners.
+Native device acceptance still requires reachable Supabase and a Stockpot development build.
 
 ## Continuous integration
 

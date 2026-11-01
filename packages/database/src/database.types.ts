@@ -227,6 +227,209 @@ export type Database = {
           },
         ];
       };
+      ingredient_aliases: {
+        Row: {
+          alias: string;
+          ingredient_id: string;
+        };
+        Insert: {
+          alias: string;
+          ingredient_id: string;
+        };
+        Update: {
+          alias?: string;
+          ingredient_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "ingredient_aliases_ingredient_id_fkey";
+            columns: ["ingredient_id"];
+            isOneToOne: false;
+            referencedRelation: "ingredients";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      ingredients: {
+        Row: {
+          canonical_name: string;
+          category: string;
+          default_storage_location: string;
+          id: string;
+          measurement_type: string;
+        };
+        Insert: {
+          canonical_name: string;
+          category: string;
+          default_storage_location: string;
+          id: string;
+          measurement_type: string;
+        };
+        Update: {
+          canonical_name?: string;
+          category?: string;
+          default_storage_location?: string;
+          id?: string;
+          measurement_type?: string;
+        };
+        Relationships: [];
+      };
+      inventory_lots: {
+        Row: {
+          confidence: string;
+          created_at: string;
+          created_by_user_id: string;
+          expiry_date: string | null;
+          expiry_kind: string | null;
+          expiry_source: string | null;
+          frozen_at: string | null;
+          household_id: string;
+          id: string;
+          ingredient_id: string;
+          measurement_type: string;
+          note: string;
+          original_quantity: number;
+          original_quantity_base: number;
+          original_unit: string;
+          storage_location: string;
+          version: number;
+        };
+        Insert: {
+          confidence: string;
+          created_at?: string;
+          created_by_user_id: string;
+          expiry_date?: string | null;
+          expiry_kind?: string | null;
+          expiry_source?: string | null;
+          frozen_at?: string | null;
+          household_id: string;
+          id?: string;
+          ingredient_id: string;
+          measurement_type: string;
+          note?: string;
+          original_quantity: number;
+          original_quantity_base: number;
+          original_unit: string;
+          storage_location: string;
+          version?: number;
+        };
+        Update: {
+          confidence?: string;
+          created_at?: string;
+          created_by_user_id?: string;
+          expiry_date?: string | null;
+          expiry_kind?: string | null;
+          expiry_source?: string | null;
+          frozen_at?: string | null;
+          household_id?: string;
+          id?: string;
+          ingredient_id?: string;
+          measurement_type?: string;
+          note?: string;
+          original_quantity?: number;
+          original_quantity_base?: number;
+          original_unit?: string;
+          storage_location?: string;
+          version?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "inventory_lots_created_by_user_id_fkey";
+            columns: ["created_by_user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "inventory_lots_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "inventory_lots_ingredient_id_fkey";
+            columns: ["ingredient_id"];
+            isOneToOne: false;
+            referencedRelation: "ingredients";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      inventory_transactions: {
+        Row: {
+          actor_user_id: string;
+          confidence: string;
+          household_id: string;
+          id: string;
+          ingredient_id: string;
+          lot_id: string;
+          measurement_type: string;
+          occurred_at: string;
+          quantity_delta_base: number;
+          reason: string;
+          request_id: string;
+          source_type: string;
+        };
+        Insert: {
+          actor_user_id: string;
+          confidence: string;
+          household_id: string;
+          id?: string;
+          ingredient_id: string;
+          lot_id: string;
+          measurement_type: string;
+          occurred_at?: string;
+          quantity_delta_base: number;
+          reason: string;
+          request_id: string;
+          source_type: string;
+        };
+        Update: {
+          actor_user_id?: string;
+          confidence?: string;
+          household_id?: string;
+          id?: string;
+          ingredient_id?: string;
+          lot_id?: string;
+          measurement_type?: string;
+          occurred_at?: string;
+          quantity_delta_base?: number;
+          reason?: string;
+          request_id?: string;
+          source_type?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "inventory_transactions_actor_user_id_fkey";
+            columns: ["actor_user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "inventory_transactions_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "inventory_transactions_ingredient_id_fkey";
+            columns: ["ingredient_id"];
+            isOneToOne: false;
+            referencedRelation: "ingredients";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "inventory_transactions_lot_id_household_id_fkey";
+            columns: ["lot_id", "household_id"];
+            isOneToOne: false;
+            referencedRelation: "inventory_lots";
+            referencedColumns: ["id", "household_id"];
+          },
+        ];
+      };
       profiles: {
         Row: {
           created_at: string;
@@ -319,6 +522,14 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      add_inventory_lot: {
+        Args: { payload: Json; target_household_id: string };
+        Returns: Json;
+      };
+      adjust_inventory_lot: {
+        Args: { payload: Json; target_household_id: string };
+        Returns: Json;
+      };
       archive_household: {
         Args: { target_household_id: string };
         Returns: undefined;
@@ -355,6 +566,14 @@ export type Database = {
           id: string;
         }[];
       };
+      freeze_inventory_lot: {
+        Args: { payload: Json; target_household_id: string };
+        Returns: Json;
+      };
+      get_inventory_history: {
+        Args: { target_household_id: string; target_lot_id: string };
+        Returns: Json;
+      };
       get_kitchen_settings: {
         Args: { target_household_id: string };
         Returns: Json;
@@ -373,6 +592,10 @@ export type Database = {
           revoked_at: string;
         }[];
       };
+      list_inventory_lots: {
+        Args: { target_household_id: string };
+        Returns: Json;
+      };
       revoke_household_invitation: {
         Args: { target_invitation_id: string };
         Returns: undefined;
@@ -382,6 +605,10 @@ export type Database = {
         Returns: Json;
       };
       save_personal_preferences: { Args: { payload: Json }; Returns: Json };
+      search_inventory_ingredients: {
+        Args: { search_query?: string };
+        Returns: Json;
+      };
     };
     Enums: {
       [_ in never]: never;
