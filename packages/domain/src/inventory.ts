@@ -18,6 +18,7 @@ export type InventoryLot = {
   ingredient: Ingredient;
   quantityBase: number;
   originalQuantityBase: number;
+  originalConfidence: StockConfidence;
   measurementType: MeasurementType;
   storageLocation: StorageLocation;
   confidence: StockConfidence;
@@ -168,6 +169,7 @@ export function validateInventoryLot(value: unknown): Result<InventoryLot> {
     !validateIngredient(value.ingredient).ok ||
     !bounded(value.quantityBase) ||
     !bounded(value.originalQuantityBase) ||
+    !confidence(value.originalConfidence) ||
     value.originalQuantityBase <= 0 ||
     !["mass", "volume", "count"].includes(String(value.measurementType)) ||
     value.measurementType !== (value.ingredient as Ingredient).measurementType ||

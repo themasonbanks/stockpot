@@ -37,7 +37,10 @@ mean a user-confirmed packaging date; `estimated` means user-estimated freshness
 never a confirmed safety date. An absent date remains absent. Freezing is explicit,
 records its timestamp and a zero-delta history event, and preserves the original
 date and provenance. It creates no freezer shelf-life estimate or safety guarantee.
-Lots added already frozen record this state at addition. Use-soon considers positive
+Lots added already frozen record the location with an unknown freezing timestamp;
+only an explicit freeze action establishes a known freezing time. Original quantity
+confidence is derived from the immutable initial addition, independently of the
+current quantity confidence after corrections. Use-soon considers positive
 nonfreezer lots dated within three calendar days, including passed dates, using the
 household-local date. Frozen original dates remain visible in details but do not
 create immediate refrigerated-expiry warnings. No food is automatically spoiled or

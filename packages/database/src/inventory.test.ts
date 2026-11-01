@@ -58,6 +58,7 @@ test("malformed or cross-household server state fails closed", async () => {
     },
     quantityBase: 300,
     originalQuantityBase: 500,
+    originalConfidence: "estimated",
     measurementType: "mass",
     storageLocation: "cupboard",
     confidence: "confirmed",

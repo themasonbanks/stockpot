@@ -77,6 +77,7 @@ const lot = {
   },
   quantityBase: 500,
   originalQuantityBase: 500,
+  originalConfidence: "estimated",
   measurementType: "mass",
   storageLocation: "fridge",
   confidence: "confirmed",

@@ -54,6 +54,13 @@ select is(jsonb_array_length(public.get_inventory_history('80000000-0000-0000-00
 update inventory_fixture set lot=public.adjust_inventory_lot('80000000-0000-0000-0000-000000000001',jsonb_build_object('requestId','90000000-0000-0000-0000-000000000006','lotId',lot->>'id','expectedVersion',3,'quantityBase',0,'confidence','confirmed','reason','Finished the pack'));
 select is((select (lot->>'quantityBase')::numeric from inventory_fixture),0::numeric,'zero stock retained with ledger history');
 select is((select count(*) from public.inventory_lots)::integer,1,'empty lot is not deleted');
+select is((select lot->>'originalConfidence' from inventory_fixture),'confirmed','later estimated/exact corrections preserve initial certainty');
+update inventory_fixture set lot=public.add_inventory_lot('80000000-0000-0000-0000-000000000001',payload||'{"requestId":"90000000-0000-0000-0000-000000000007","storageLocation":"freezer","confidence":"estimated"}');
+select ok((select lot->>'frozenAt' is null from inventory_fixture),'adding preexisting freezer stock does not invent a freeze timestamp');
+select is((select lot->>'originalConfidence' from inventory_fixture),'estimated','original estimated addition is retained');
+update inventory_fixture set lot=public.adjust_inventory_lot('80000000-0000-0000-0000-000000000001',jsonb_build_object('requestId','90000000-0000-0000-0000-000000000008','lotId',lot->>'id','expectedVersion',1,'quantityBase',300,'confidence','confirmed','reason','Weighed the remaining food'));
+select is((select lot->>'originalConfidence' from inventory_fixture),'estimated','exact correction cannot retroactively confirm original estimate');
+select is((select lot->>'confidence' from inventory_fixture),'confirmed','current quantity can be confirmed independently');
 set local request.jwt.claims='{"sub":"00000000-0000-0000-0000-000000000053","role":"authenticated"}';
 select is((select count(*) from public.inventory_lots)::integer,0,'nonmember RLS hides lots');
 select is((select count(*) from public.inventory_transactions)::integer,0,'nonmember RLS hides ledger');
