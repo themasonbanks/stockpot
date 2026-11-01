@@ -28,6 +28,81 @@ export type Database = {
   };
   public: {
     Tables: {
+      cuisine_preferences: {
+        Row: {
+          cuisine: string;
+          score: number;
+          user_id: string;
+        };
+        Insert: {
+          cuisine: string;
+          score: number;
+          user_id: string;
+        };
+        Update: {
+          cuisine?: string;
+          score?: number;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "cuisine_preferences_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "user_preference_profiles";
+            referencedColumns: ["user_id"];
+          },
+        ];
+      };
+      dietary_rules: {
+        Row: {
+          rule_type: string;
+          user_id: string;
+          value: string;
+        };
+        Insert: {
+          rule_type: string;
+          user_id: string;
+          value: string;
+        };
+        Update: {
+          rule_type?: string;
+          user_id?: string;
+          value?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "dietary_rules_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "user_preference_profiles";
+            referencedColumns: ["user_id"];
+          },
+        ];
+      };
+      household_equipment: {
+        Row: {
+          equipment_key: string;
+          household_id: string;
+        };
+        Insert: {
+          equipment_key: string;
+          household_id: string;
+        };
+        Update: {
+          equipment_key?: string;
+          household_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "household_equipment_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "household_planning_settings";
+            referencedColumns: ["household_id"];
+          },
+        ];
+      };
       household_members: {
         Row: {
           archived_at: string | null;
@@ -72,6 +147,41 @@ export type Database = {
             columns: ["user_id"];
             isOneToOne: false;
             referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      household_planning_settings: {
+        Row: {
+          cadence: string;
+          completed: boolean;
+          equipment_note: string;
+          household_id: string;
+          planning_day: number;
+          updated_at: string;
+        };
+        Insert: {
+          cadence?: string;
+          completed?: boolean;
+          equipment_note?: string;
+          household_id: string;
+          planning_day?: number;
+          updated_at?: string;
+        };
+        Update: {
+          cadence?: string;
+          completed?: boolean;
+          equipment_note?: string;
+          household_id?: string;
+          planning_day?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "household_planning_settings_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: true;
+            referencedRelation: "households";
             referencedColumns: ["id"];
           },
         ];
@@ -138,6 +248,53 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_preference_profiles: {
+        Row: {
+          adventure_weight: number;
+          budget_weight: number;
+          completed: boolean;
+          effort_weight: number;
+          max_cook_minutes: number;
+          reuse_weight: number;
+          safety_reviewed: boolean;
+          updated_at: string;
+          user_id: string;
+          variety_weight: number;
+        };
+        Insert: {
+          adventure_weight?: number;
+          budget_weight?: number;
+          completed?: boolean;
+          effort_weight?: number;
+          max_cook_minutes?: number;
+          reuse_weight?: number;
+          safety_reviewed?: boolean;
+          updated_at?: string;
+          user_id: string;
+          variety_weight?: number;
+        };
+        Update: {
+          adventure_weight?: number;
+          budget_weight?: number;
+          completed?: boolean;
+          effort_weight?: number;
+          max_cook_minutes?: number;
+          reuse_weight?: number;
+          safety_reviewed?: boolean;
+          updated_at?: string;
+          user_id?: string;
+          variety_weight?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "user_preference_profiles_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: true;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -198,6 +355,11 @@ export type Database = {
           id: string;
         }[];
       };
+      get_kitchen_settings: {
+        Args: { target_household_id: string };
+        Returns: Json;
+      };
+      get_personal_preferences: { Args: never; Returns: Json };
       is_household_member: {
         Args: { target_household_id: string };
         Returns: boolean;
@@ -215,6 +377,11 @@ export type Database = {
         Args: { target_invitation_id: string };
         Returns: undefined;
       };
+      save_kitchen_settings: {
+        Args: { payload: Json; target_household_id: string };
+        Returns: Json;
+      };
+      save_personal_preferences: { Args: { payload: Json }; Returns: Json };
     };
     Enums: {
       [_ in never]: never;
