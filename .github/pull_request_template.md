@@ -1,21 +1,21 @@
 ## Outcome
 
-Describe the problem and resulting behaviour.
+State the problem and resulting behaviour in one short paragraph.
 
 Linear issue:
 
 ## Acceptance evidence
 
-- [ ] Map the issue criteria to the implementation and evidence.
-- [ ] Include screenshots for visible changes, including light/dark where relevant.
+Map each issue criterion to its implementation or evidence. Identify unmet criteria.
+Include screenshots for visible changes, including light/dark where relevant.
 
 ## Validation
 
-List checks actually run and their results. Explain unverified criteria.
-For schema changes include migration/RLS results and generated-type drift.
-For mobile changes include simulator/device evidence where applicable.
+List commands actually run, results and CI links. Explain unavailable checks.
+For schema changes include disposable migration/RLS results and generated-type drift.
+For mobile changes include relevant simulator/device evidence.
 
 ## Rollback and delivery
 
-Describe how to roll back safely, including whether migrations are additive.
-State remaining dependencies. A PR is not evidence of merge or deployment.
+Explain rollback, remaining dependencies and whether this is implemented, tested,
+reviewed, merged or deployed. A PR alone proves none of the later stages.
