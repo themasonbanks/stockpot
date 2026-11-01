@@ -1,4 +1,4 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { createClient, processLock, type SupabaseClient } from "@supabase/supabase-js";
 
 import type { Database } from "./database.types";
 
@@ -37,6 +37,8 @@ export function createMobileSupabaseClient(config: {
     {
       auth: {
         storage: config.storage,
+        flowType: "pkce",
+        lock: processLock,
         autoRefreshToken: true,
         detectSessionInUrl: false,
         persistSession: true,
