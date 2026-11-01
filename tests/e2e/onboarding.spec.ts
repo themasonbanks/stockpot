@@ -204,6 +204,19 @@ test("accept racing archival never leaves an active member in archived kitchen",
 test("signed-out invite persists through authentication and joins once", async ({ page }) => {
   const f = await inviteFixture(),
     email = await createAccount();
+  const shared = await rpc(f.owner.token, "save_kitchen_settings", {
+    target_household_id: f.household,
+    payload: {
+      cadence: "weekly",
+      planningDay: 0,
+      timezone: "Europe/London",
+      defaultServings: 2,
+      equipment: ["oven", "hob"],
+      equipmentNote: "",
+      completed: true,
+    },
+  });
+  expect(shared.status).toBe(200);
   await page.goto(`/invite?code=${f.invitation.code}`);
   await page.getByLabel("Email", { exact: true }).fill(email);
   await page.getByLabel("Password", { exact: true }).fill(password);
@@ -213,6 +226,13 @@ test("signed-out invite persists through authentication and joins once", async (
   await expect(page.getByText("What should we call you?")).toBeVisible();
   await page.reload();
   await expect(page.getByText("What should we call you?")).toBeVisible();
+  await page.getByLabel("Your name").fill("Jamie");
+  await page.getByRole("button", { name: "Continue to my kitchen" }).click();
+  await finishPersonal(page, true);
+  await expect(page.getByText("Welcome home, Jamie.")).toBeVisible();
+  await expect(page.getByText("A rhythm that works for you.")).toHaveCount(0);
+  const ownerPreferences = await rpc(f.owner.token, "get_personal_preferences", {});
+  expect(await ownerPreferences.json()).toBeNull();
 });
 
 test("callback refresh restores the session without reusing a one-time code", async ({ page }) => {
