@@ -35,8 +35,8 @@ Stockpot is a Bun-managed TypeScript monorepo orchestrated by Turborepo.
 
 - `apps/mobile` contains the Expo and React Native client.
 - `services/api` contains the Hono API running on Bun. It is the future boundary for mobile and MCP-facing capabilities.
-- `packages/domain` is reserved for framework-independent domain types and rules.
-- `packages/database` is reserved for database access and persistence adapters.
+- `packages/domain` contains framework-independent household and onboarding types, validation and local-date rules.
+- `packages/database` contains generated Supabase contracts and typed household, invitation and preference services.
 - `packages/planner` is reserved for meal-planning capabilities.
 - `packages/shared` is reserved for genuinely cross-cutting TypeScript utilities and contracts.
 - `supabase` contains local Supabase configuration, migrations, and Edge Functions.
@@ -144,10 +144,19 @@ names are trimmed and capped at 80 characters; blank names remain unset.
 | `bun run format` | Format source files with Biome |
 | `bun run format:check` | Verify formatting without changing files |
 | `bun run typecheck` | Type-check every workspace |
+| `bun run test:e2e` | Exercise onboarding against disposable local Supabase |
 
 ## MVP status
 
-Stockpot is at the repository-scaffolding stage. The monorepo, minimal Expo client, Hono health endpoint, shared package boundaries, and local Supabase layout are present. Inventory lots, expiry modelling, meal planning, shopping lists, receipt scanning, consumption flows, persistence, authentication, and MCP exposure are intentionally not implemented in this scaffold and will arrive in later tickets.
+Stockpot now has connected email/password authentication, secure native session storage,
+household creation and invitations, private food preferences, shared planning/equipment,
+and resumable onboarding. The light/dark mobile UI uses the documented semantic design
+system. See [mobile setup and validation](docs/mobile-onboarding.md).
+
+The kitchen inventory ledger, expiry-aware stocktake, recipe library, meal-planning
+engine, shopping, receipt scanning, cooking/consumption and MCP remain the next product
+work. The app does not fabricate inventory or planned dinners. Native device acceptance
+still requires a configured Supabase project and a Stockpot development build.
 
 ## Continuous integration
 
