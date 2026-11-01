@@ -1,9 +1,12 @@
 import { appendFile } from "node:fs/promises";
 
-const child = Bun.spawn(["supabase", "status", "-o", "json"], {
-  stdout: "pipe",
-  stderr: "inherit",
-});
+const child = Bun.spawn(
+  [process.execPath, "x", "--no-install", "supabase", "status", "-o", "json"],
+  {
+    stdout: "pipe",
+    stderr: "inherit",
+  },
+);
 const output = await new Response(child.stdout).text();
 if ((await child.exited) !== 0) throw new Error("Local Supabase status failed");
 const status = JSON.parse(output);
