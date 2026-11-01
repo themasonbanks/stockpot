@@ -111,7 +111,7 @@ test("Kitchen saves recover from lost responses, corrections and freezing preser
   await page.getByRole("radio", { name: "Unit: kg", exact: true }).click();
   await page.getByRole("radio", { name: "Approximate amount", exact: true }).click();
   await page.getByRole("radio", { name: "Use-by from packaging", exact: true }).click();
-  const today = new Date().toISOString().slice(0, 10);
+  const today = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
   await page.getByLabel("Date (YYYY-MM-DD)").fill(today);
   let committed = false;
   await page.route("**/rest/v1/rpc/add_inventory_lot", async (route) => {
@@ -126,6 +126,32 @@ test("Kitchen saves recover from lost responses, corrections and freezing preser
   await page.unroute("**/rest/v1/rpc/add_inventory_lot");
   await page.reload();
   await page.getByRole("button", { name: "Open Kitchen", exact: true }).click();
+  let authRejected = false;
+  await page.route("**/auth/v1/user", async (route) => {
+    authRejected = true;
+    await route.fulfill({
+      status: 401,
+      contentType: "application/json",
+      body: JSON.stringify({ code: "bad_jwt", msg: "JWT expired" }),
+    });
+  });
+  await page.getByRole("button", { name: "Retry saved stock change", exact: true }).click();
+  await expect.poll(() => authRejected).toBe(true);
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        Object.keys(sessionStorage).some((key) => key.startsWith("stockpot.inventory-pending.")),
+      ),
+    )
+    .toBe(true);
+  await page.unroute("**/auth/v1/user");
+  if ((await page.getByRole("button", { name: "Sign in", exact: true }).count()) === 0) {
+    await page.getByRole("button", { name: "Sign out", exact: true }).click();
+  }
+  await page.getByLabel("Email", { exact: true }).fill(f.email);
+  await page.getByLabel("Password", { exact: true }).fill(password);
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  await page.getByRole("button", { name: "Open Kitchen", exact: true }).click();
   await page.getByRole("button", { name: "Retry saved stock change", exact: true }).click();
   await expect(page.getByText("Ingredient added to your kitchen.")).toBeVisible();
   const lots = await (
@@ -135,6 +161,12 @@ test("Kitchen saves recover from lost responses, corrections and freezing preser
   expect(lots[0].quantityBase).toBe(600);
   await page.getByRole("radio", { name: "Use soon", exact: true }).click();
   await expect(page.getByText(/About 600 g/)).toBeVisible();
+  await expect(
+    page.getByText(`Use-by date passed · ${today} · confirmed packaging date`),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "View chicken breast lot 1", exact: true })
+    .scrollIntoViewIfNeeded();
   await page.screenshot({ path: "test-results/inventory-light.png", fullPage: true });
   await page.emulateMedia({ colorScheme: "dark" });
   await page.screenshot({ path: "test-results/inventory-dark.png", fullPage: true });
@@ -151,7 +183,7 @@ test("Kitchen saves recover from lost responses, corrections and freezing preser
   await expect(page.getByText("Nothing in this view")).toBeVisible();
   await page.getByRole("radio", { name: "Freezer", exact: true }).click();
   await page.getByRole("button", { name: "View chicken breast lot 1", exact: true }).click();
-  await expect(page.getByText(new RegExp(`original use-by date: ${today}`))).toBeVisible();
+  await expect(page.getByText(new RegExp(`original use-by date: ${today}`, "i"))).toBeVisible();
   await page.getByRole("button", { name: "Show stock history", exact: true }).click();
   await expect(page.getByText(/Amount corrected · -250 g/)).toBeVisible();
   await expect(page.getByText(/Moved to freezer · 0 g/)).toBeVisible();
@@ -202,7 +234,7 @@ test("concurrent inventory retries deduplicate and stale corrections cannot over
   expect(results.filter((r) => r.ok)).toHaveLength(1);
   const failed = results.find((r) => !r.ok);
   if (!failed) throw new Error("Expected a conflicting correction");
-  expect((await failed.json()).code).toBe("40001");
+  expect((await failed.json()).code).toBe("PT409");
   const history = await (
     await rpc(f.token, "get_inventory_history", {
       target_household_id: f.household,

@@ -1,6 +1,10 @@
 import { isUuid } from "@stockpot/domain";
 import type { KeyValueStorage } from "../auth/storage";
 
+export function isDefinitiveInventoryRejection(code: string) {
+  return code === "invalid_input" || code === "conflict";
+}
+
 export type PendingChange = {
   kind: "add" | "adjust" | "freeze";
   input: { requestId: string; [key: string]: unknown };

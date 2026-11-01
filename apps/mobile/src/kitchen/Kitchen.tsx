@@ -17,7 +17,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { authStorage } from "../lib/storage";
 import { Body, Button, Card, Field, Notice, Screen, TextLink, useTheme } from "../ui";
-import { inventoryPendingStore, type PendingChange } from "./pending";
+import {
+  inventoryPendingStore,
+  isDefinitiveInventoryRejection,
+  type PendingChange,
+} from "./pending";
 
 function Choice({
   label,
@@ -55,7 +59,7 @@ function Choice({
     </Pressable>
   );
 }
-function Heading({ children }: { children: string }) {
+function Heading({ children }: { children: React.ReactNode }) {
   const t = useTheme();
   return (
     <Text
@@ -65,6 +69,17 @@ function Heading({ children }: { children: string }) {
       {children}
     </Text>
   );
+}
+function ExpiryText({ lot, today }: { lot: InventoryLot; today: string }) {
+  if (
+    lot.storageLocation !== "freezer" &&
+    lot.expiryKind === "use_by" &&
+    lot.expiryDate &&
+    lot.expiryDate < today
+  ) {
+    return <Notice error>Use-by date passed · {lot.expiryDate} · confirmed packaging date</Notice>;
+  }
+  return <Body>{inventoryExpiryLabel(lot, today)}</Body>;
 }
 const locations = ["fridge", "freezer", "cupboard", "other"] as const;
 const locationLabel = (value: string) => value[0].toUpperCase() + value.slice(1);
@@ -147,9 +162,7 @@ export function Kitchen({
             : await service.freezeLot(household.id, change.input as unknown as FreezeLotInput);
       if (!alive.current) return false;
       if (!result.ok) {
-        if (
-          ["invalid_input", "conflict", "forbidden", "unauthenticated"].includes(result.error.code)
-        ) {
+        if (isDefinitiveInventoryRejection(result.error.code)) {
           await store.clear();
           setPending(null);
           if (result.error.code === "conflict") {
@@ -325,7 +338,7 @@ export function Kitchen({
             {formatInventoryQuantity(lot.quantityBase, lot.measurementType, lot.confidence)} ·{" "}
             {locationLabel(lot.storageLocation)}
           </Body>
-          <Body>{inventoryExpiryLabel(lot, today)}</Body>
+          <ExpiryText lot={lot} today={today} />
           <Button
             secondary
             label={`View ${lot.ingredient.name} lot ${index + 1}`}
@@ -536,8 +549,8 @@ function AddIngredient({
             </View>
             {storage === "freezer" ? (
               <Body>
-                Recorded as already frozen today. No freezer expiry is calculated; retain any
-                original date below.
+                Already in the freezer. Its freezing date is unknown. No freezer expiry is
+                calculated; retain any original packaging date below.
               </Body>
             ) : null}
           </Card>
@@ -671,9 +684,14 @@ function LotDetail({
           {formatInventoryQuantity(lot.quantityBase, lot.measurementType, lot.confidence)} remaining
         </Heading>
         <Body>
-          Originally {formatInventoryQuantity(lot.originalQuantityBase, lot.measurementType)}
+          Originally{" "}
+          {formatInventoryQuantity(
+            lot.originalQuantityBase,
+            lot.measurementType,
+            lot.originalConfidence,
+          )}
         </Body>
-        <Body>{inventoryExpiryLabel(lot, today)}</Body>
+        <ExpiryText lot={lot} today={today} />
         {lot.frozenAt ? (
           <Body>
             Frozen {lot.frozenAt.slice(0, 10)}. Original{" "}
@@ -683,6 +701,10 @@ function LotDetail({
                 ? "best-before"
                 : "estimated"}{" "}
             date: {lot.expiryDate ?? "not recorded"}. No freezer expiry calculated.
+          </Body>
+        ) : lot.storageLocation === "freezer" ? (
+          <Body>
+            Already in the freezer · freezing date not recorded. No freezer expiry calculated.
           </Body>
         ) : null}
         {lot.note ? <Body>{lot.note}</Body> : null}

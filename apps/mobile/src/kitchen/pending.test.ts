@@ -1,5 +1,12 @@
 import { expect, test } from "bun:test";
-import { inventoryPendingStore } from "./pending";
+import { inventoryPendingStore, isDefinitiveInventoryRejection } from "./pending";
+
+test("authentication and permission failures never discard an uncertain committed change", () => {
+  for (const code of ["unauthenticated", "forbidden", "unavailable", "invalid_state"])
+    expect(isDefinitiveInventoryRejection(code)).toBe(false);
+  for (const code of ["invalid_input", "conflict"])
+    expect(isDefinitiveInventoryRejection(code)).toBe(true);
+});
 
 test("uncertain stock changes survive restart and are isolated by account and kitchen", async () => {
   const data = new Map<string, string>();
