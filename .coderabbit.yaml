@@ -21,6 +21,9 @@ reviews:
     - "!**/node_modules/**"
     - "!**/dist/**"
     - "!coverage/**"
+    - "!packages/*/coverage/**"
+    - "!apps/*/coverage/**"
+    - "!services/*/coverage/**"
     - "!**/test-results/**"
     - "!**/playwright-report/**"
   path_instructions:
