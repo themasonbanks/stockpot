@@ -2,6 +2,11 @@
 
 ## Working agreement
 
+- Start from the current Linear issue and acceptance criteria; use one issue per branch and keep unrelated changes out of the PR. Report unclear requirements or missing source evidence before choosing a new direction.
+- Never put credentials, tokens or private values in commits, screenshots, logs or review examples. Report secret references, not secret values.
+- The task does not grant merge or deployment permission. Obtain explicit user authority for either; production requires its separate human gate.
+- Code comments explain what the code beneath them does. Put ticket references, decision rationale and implementation history in documentation or PR descriptions.
+
 - The main conversation acts as project lead. Use the five roles in `.codex/agents/` and the workflow in `docs/agent-team.md`.
 - Delegate bounded, independent work when useful. Keep at most four agents active including the lead, at most two implementation agents writing, and no nested delegation by specialists.
 - Give each assignment a ticket or user objective, acceptance criteria, base revision/worktree, allowed files, dependencies, checks, and expected handoff. Keep small or sequential work local.
