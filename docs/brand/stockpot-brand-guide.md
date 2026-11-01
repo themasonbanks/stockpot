@@ -17,7 +17,7 @@ not an assertion that the user separately approved each exact value.
 premium without fuss. Gousto informs food presentation, Apple apps inform native
 interaction quality, and Particle informs uncluttered information. Use a restrained
 pot/steam mark, never a cartoon mascot. The concept board is directional, not a pixel
-specification; comparison with its embedded image remains outstanding.
+specification; its embedded image was inspected on 1 November 2026.
 
 The proposition is meal-kit convenience using food and supermarkets people already
 use. Pantry tracking supports that promise. **Automate the admin, surface the decisions.**
@@ -210,3 +210,15 @@ The semantic palette and native system-font fallback are adopted for this implem
 Representative light/dark browser screens have been rendered and inspected. Comparison
 with the concept board, bundled Fraunces/Inter/Lucide assets and native font/accessibility
 checks remain outstanding; these are distinct from the adopted initial fallback system.
+
+## Concept-board comparison — 1 November 2026
+
+The Linear concept board has now been inspected alongside the rendered light/dark
+onboarding screens. Its reference swatches are terracotta #C65A30, olive #5C684F,
+sage #A3B18A, cream #F6F2EA, stone #E7E2D9 and charcoal #1C1C1C. The semantic
+implementation uses contrast-adjusted variants, notably the darker light-mode action
+colour, while retaining the warm cream/earth palette and calm native layout. The board's
+Fraunces/Inter and pot/steam mark remain the direction for a bundled asset pass; initial
+onboarding uses the explicitly adopted native-font fallback. Dinner photography and
+five-tab navigation belong to the upcoming meal/inventory screens, not fabricated
+onboarding content. Native font/accessibility checks still require device acceptance.
