@@ -1,3 +1,4 @@
+import { StatusBar } from "expo-status-bar";
 import type { ReactNode } from "react";
 import {
   ActivityIndicator,
@@ -13,7 +14,6 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { StatusBar } from "expo-status-bar";
 
 const palettes = {
   light: {
@@ -126,7 +126,7 @@ export function Button({
   disabled,
 }: {
   label: string;
-  onPress: () => void | Promise<void>;
+  onPress: () => unknown | Promise<unknown>;
   loading?: boolean;
   secondary?: boolean;
   disabled?: boolean;
@@ -170,7 +170,7 @@ export function TextLink({
   onPress,
 }: {
   label: string;
-  onPress: () => void | Promise<void>;
+  onPress: () => unknown | Promise<unknown>;
 }) {
   const t = useTheme();
   return (
@@ -215,7 +215,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 12,
   },
-  buttonLabel: { fontSize: 17, lineHeight: 23, fontWeight: "600" },
+  buttonLabel: {
+    flexShrink: 1,
+    textAlign: "center",
+    fontSize: 17,
+    lineHeight: 23,
+    fontWeight: "600",
+  },
   notice: { borderRadius: 12, padding: 16 },
   noticeText: { fontSize: 15, lineHeight: 22 },
   link: { minHeight: 48, justifyContent: "center", alignItems: "center", padding: 8 },

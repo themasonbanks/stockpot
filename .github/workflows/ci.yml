@@ -56,6 +56,21 @@ jobs:
           retention-days: 7
       - name: Check committed types match the migrated database
         run: git diff --exit-code -- packages/database/src/database.types.ts
+      - name: Prepare local-only browser test environment
+        run: bun scripts/e2e-env.ts
+      - name: Install test browser
+        run: bunx --no-install playwright install --with-deps chromium
+      - name: Exercise connected onboarding
+        run: bun run test:e2e
+      - name: Save browser screenshots and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: onboarding-browser-results
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
       - name: Stop disposable local Supabase
         if: always()
         run: bunx --no-install supabase stop --no-backup

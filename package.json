@@ -18,12 +18,14 @@
     "db:test": "supabase test db",
     "db:types": "bun scripts/generate-database-types.ts",
     "typecheck": "turbo typecheck",
-    "test:scripts": "bun test scripts"
+    "test:scripts": "bun test scripts",
+    "test:e2e": "playwright test"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.2",
     "supabase": "^2.113.0",
     "turbo": "^2.5.6",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "@playwright/test": "^1.56.1"
   }
 }

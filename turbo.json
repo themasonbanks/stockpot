@@ -13,5 +13,11 @@
       "dependsOn": ["^typecheck"],
       "outputs": []
     }
-  }
+  },
+  "globalPassThroughEnv": [
+    "GITHUB_ENV",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "EXPO_PUBLIC_SUPABASE_URL",
+    "EXPO_PUBLIC_SUPABASE_ANON_KEY"
+  ]
 }
