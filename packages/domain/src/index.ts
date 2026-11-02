@@ -8,6 +8,7 @@ export type {
   Result,
 } from "./households";
 export { isUuid, validateCreateHousehold } from "./households";
+export * from "./inventory";
 export type { EquipmentKey, KitchenSettings, PersonalPreferences } from "./preferences";
 export {
   DEFAULT_PERSONAL_PREFERENCES,

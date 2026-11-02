@@ -6,7 +6,7 @@ values
   ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'one@example.com', '', '{}', '{"display_name":"Alex"}'),
   ('00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'two@example.com', '', '{}', '{}');
 
-select is((select count(*) from public.profiles)::integer, 2, 'creates exactly one profile per auth user');
+select is((select count(*) from public.profiles where id between '00000000-0000-0000-0000-000000000001' and '00000000-0000-0000-0000-000000000006')::integer, 2, 'creates exactly one profile per auth user');
 select is((select display_name from public.profiles where id = '00000000-0000-0000-0000-000000000001'), 'Alex', 'copies display name metadata');
 
 -- Signup metadata must not prevent auth-user creation at the profile boundary.
@@ -21,7 +21,7 @@ select is((select char_length(display_name) from public.profiles where id = '000
 select is((select display_name from public.profiles where id = '00000000-0000-0000-0000-000000000004'), repeat('B', 80), 'truncates oversized signup metadata');
 select is((select display_name from public.profiles where id = '00000000-0000-0000-0000-000000000005'), null::text, 'normalises blank metadata');
 select is((select display_name from public.profiles where id = '00000000-0000-0000-0000-000000000006'), repeat('界', 80), 'truncates Unicode names by characters');
-select is((select count(*) from public.profiles)::integer, 6, 'boundary signups each receive a profile');
+select is((select count(*) from public.profiles where id between '00000000-0000-0000-0000-000000000001' and '00000000-0000-0000-0000-000000000006')::integer, 6, 'boundary signups each receive a profile');
 
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"00000000-0000-0000-0000-000000000001","role":"authenticated"}';

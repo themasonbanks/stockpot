@@ -16,6 +16,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { ManageInvitations } from "../household/Invitations";
 import { usePendingInvite } from "../household/PendingInvite";
+import { Kitchen } from "../kitchen/Kitchen";
 import { Body, Button, Card, Field, Notice, Screen, TextLink, useTheme } from "../ui";
 import { nextOnboardingStep } from "./progress";
 
@@ -82,6 +83,7 @@ export function SetupExperience({
   const [data, setData] = useState<Data | null>(null),
     [error, setError] = useState<string | null>(null);
   const [edit, setEdit] = useState<"personal" | "kitchen" | null>(null);
+  const [showStock, setShowStock] = useState(false);
   const generation = useRef(0);
   const pending = usePendingInvite();
   const t = useTheme();
@@ -191,6 +193,16 @@ export function SetupExperience({
         }}
       />
     );
+  if (showStock)
+    return (
+      <Kitchen
+        client={client}
+        household={{ ...household, timezone: data.kitchen.timezone }}
+        userId={user.id}
+        onBack={() => setShowStock(false)}
+        onSignOut={onSignOut}
+      />
+    );
   return (
     <Screen
       step="home"
@@ -219,6 +231,7 @@ export function SetupExperience({
         </Body>
       </Card>
       {error ? <Notice error>{error}</Notice> : null}
+      <Button label="Open Kitchen" onPress={() => setShowStock(true)} />
       <Button label="Refresh kitchen" secondary onPress={onRefresh} />
       <Button label="Edit my food preferences" secondary onPress={() => setEdit("personal")} />
       <Button label="Edit kitchen settings" secondary onPress={() => setEdit("kitchen")} />

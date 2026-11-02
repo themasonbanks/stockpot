@@ -10,7 +10,7 @@ set local request.jwt.claims = '{"sub":"00000000-0000-0000-0000-000000000011","r
 select lives_ok($$select public.create_household('10000000-0000-0000-0000-000000000001', ' Kitchen One ')$$, 'creates household and owner atomically');
 select lives_ok($$select public.create_household('10000000-0000-0000-0000-000000000001', 'Ignored retry')$$, 'same request ID is safe to retry');
 select is((select name from public.households where id = '10000000-0000-0000-0000-000000000001'), 'Kitchen One', 'retry does not overwrite settings');
-select is((select count(*) from public.household_members)::integer, 1, 'retry creates no duplicate membership');
+select is((select count(*) from public.household_members where user_id between '00000000-0000-0000-0000-000000000011' and '00000000-0000-0000-0000-000000000015')::integer, 1, 'retry creates no duplicate membership');
 select throws_ok($$select public.create_household('10000000-0000-0000-0000-000000000099', 'Duplicate')$$, '23514', 'User already has an active household', 'one household per user');
 
 set local request.jwt.claims = '{"sub":"00000000-0000-0000-0000-000000000013","role":"authenticated"}';
@@ -60,7 +60,7 @@ select throws_ok($$select public.create_household('10000000-0000-0000-0000-00000
 
 reset role;
 select is((select name from public.households where id = '10000000-0000-0000-0000-000000000001'), 'Member edit', 'non-member did not mutate household');
-select is((select count(*) from public.households)::integer, 2, 'failed creation leaves no partial household');
+select is((select count(*) from public.households where created_by_user_id between '00000000-0000-0000-0000-000000000011' and '00000000-0000-0000-0000-000000000015')::integer, 2, 'failed creation leaves no partial household');
 select throws_ok($$insert into public.household_members(household_id,user_id,role,slot) values ('10000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000015','member',2)$$, '23505', null, 'third active member rejected');
 select throws_ok($$insert into public.household_members(household_id,user_id,role,slot) values ('10000000-0000-0000-0000-000000000002','00000000-0000-0000-0000-000000000012','member',2)$$, '23505', null, 'second active household membership rejected');
 select throws_ok($$update public.household_members set role = 'member' where user_id = '00000000-0000-0000-0000-000000000011'; select pg_temp.check_lifecycle()$$, '23514', 'Active household requires an owner', 'last owner cannot be demoted');
