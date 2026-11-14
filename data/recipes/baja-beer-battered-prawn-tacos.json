@@ -1,0 +1,311 @@
+{
+  "id": "baja-beer-battered-prawn-tacos",
+  "title": "Baja Fresh-style beer-battered prawn tacos",
+  "description": "Golden beer-battered prawns with smoky black beans, lime-dressed red cabbage, radish pico de gallo and tangy Baja crema in warm corn-and-wheat tortillas.",
+  "source": "Personal recipe refined through home cooking, November 2026; Baja Fresh-inspired, not an official chain recipe.",
+  "status": "tried-and-liked",
+  "servings": 2,
+  "yield": {
+    "quantity": 6,
+    "unit": "tacos"
+  },
+  "totalMinutes": 50,
+  "tags": [
+    "dinner",
+    "seafood",
+    "tacos",
+    "mexican-inspired",
+    "favourite"
+  ],
+  "components": [
+    {
+      "name": "Beer-battered prawns",
+      "ingredients": [
+        {
+          "name": "Raw peeled and deveined king prawns",
+          "quantity": 300,
+          "unit": "g"
+        },
+        {
+          "name": "Plain flour",
+          "quantity": 80,
+          "unit": "g"
+        },
+        {
+          "name": "Plain flour for dusting",
+          "quantity": 1,
+          "unit": "tbsp"
+        },
+        {
+          "name": "Cornflour",
+          "quantity": 30,
+          "unit": "g"
+        },
+        {
+          "name": "Cold lager",
+          "quantity": 130,
+          "unit": "ml"
+        },
+        {
+          "name": "Baking powder",
+          "quantity": 0.5,
+          "unit": "tsp"
+        },
+        {
+          "name": "Smoked paprika",
+          "quantity": 0.5,
+          "unit": "tsp"
+        },
+        {
+          "name": "Garlic powder",
+          "quantity": 0.5,
+          "unit": "tsp"
+        },
+        {
+          "name": "Salt",
+          "quantity": 0.5,
+          "unit": "tsp"
+        },
+        {
+          "name": "Vegetable or sunflower oil",
+          "quantity": null,
+          "unit": "for frying"
+        }
+      ]
+    },
+    {
+      "name": "Smoky black beans",
+      "ingredients": [
+        {
+          "name": "Black beans, drained",
+          "quantity": 1,
+          "unit": "400g tin"
+        },
+        {
+          "name": "Red onion, diced",
+          "quantity": 0.25,
+          "unit": "onion"
+        },
+        {
+          "name": "Garlic, minced",
+          "quantity": 1,
+          "unit": "clove"
+        },
+        {
+          "name": "Ground cumin",
+          "quantity": 0.5,
+          "unit": "tsp"
+        },
+        {
+          "name": "Smoked paprika",
+          "quantity": 0.5,
+          "unit": "tsp"
+        },
+        {
+          "name": "Water",
+          "quantity": 50,
+          "unit": "ml"
+        },
+        {
+          "name": "Olive oil",
+          "quantity": 0.5,
+          "unit": "tbsp"
+        },
+        {
+          "name": "Lime juice",
+          "quantity": 0.25,
+          "unit": "lime"
+        },
+        {
+          "name": "Salt",
+          "quantity": null,
+          "unit": "to taste"
+        }
+      ]
+    },
+    {
+      "name": "Radish pico de gallo",
+      "ingredients": [
+        {
+          "name": "Ripe tomatoes, diced",
+          "quantity": 2,
+          "unit": "medium"
+        },
+        {
+          "name": "Red onion, diced",
+          "quantity": 0.25,
+          "unit": "onion"
+        },
+        {
+          "name": "Radishes, finely diced",
+          "quantity": 2.5,
+          "unit": "radishes"
+        },
+        {
+          "name": "Green chilli, finely chopped",
+          "quantity": 0.5,
+          "unit": "chilli"
+        },
+        {
+          "name": "Coriander, chopped",
+          "quantity": 1,
+          "unit": "small handful"
+        },
+        {
+          "name": "Lime juice",
+          "quantity": 0.5,
+          "unit": "lime"
+        },
+        {
+          "name": "Salt",
+          "quantity": null,
+          "unit": "to taste"
+        }
+      ]
+    },
+    {
+      "name": "Lime cabbage",
+      "ingredients": [
+        {
+          "name": "Red cabbage, finely shredded",
+          "quantity": 0.25,
+          "unit": "small head"
+        },
+        {
+          "name": "Lime juice",
+          "quantity": 0.5,
+          "unit": "lime"
+        },
+        {
+          "name": "Salt",
+          "quantity": null,
+          "unit": "pinch"
+        },
+        {
+          "name": "Coriander",
+          "quantity": null,
+          "unit": "optional"
+        }
+      ]
+    },
+    {
+      "name": "Baja crema",
+      "ingredients": [
+        {
+          "name": "Mayonnaise",
+          "quantity": 3,
+          "unit": "tbsp"
+        },
+        {
+          "name": "Greek yoghurt",
+          "quantity": 2,
+          "unit": "tbsp"
+        },
+        {
+          "name": "Cider vinegar",
+          "quantity": 1,
+          "unit": "tsp"
+        },
+        {
+          "name": "Lime juice",
+          "quantity": 1,
+          "unit": "tsp"
+        },
+        {
+          "name": "Garlic powder",
+          "quantity": 0.25,
+          "unit": "tsp"
+        },
+        {
+          "name": "Smoked paprika",
+          "quantity": 0.25,
+          "unit": "tsp"
+        },
+        {
+          "name": "Ground cumin",
+          "quantity": null,
+          "unit": "pinch"
+        },
+        {
+          "name": "Salt",
+          "quantity": null,
+          "unit": "pinch"
+        },
+        {
+          "name": "Water",
+          "quantity": 1,
+          "unit": "tsp, add up to 2 as needed"
+        }
+      ]
+    },
+    {
+      "name": "To serve",
+      "ingredients": [
+        {
+          "name": "Small half-corn half-wheat tortillas",
+          "quantity": 6,
+          "unit": "tortillas"
+        },
+        {
+          "name": "Extra lime wedges",
+          "quantity": null,
+          "unit": "as needed"
+        },
+        {
+          "name": "Fresh coriander",
+          "quantity": null,
+          "unit": "optional"
+        }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "title": "Defrost and dry prawns",
+      "instruction": "If frozen, defrost prawns completely in the fridge beforehand. Drain and pat thoroughly dry. Keep chilled until frying."
+    },
+    {
+      "title": "Make radish pico de gallo",
+      "instruction": "Finely dice tomatoes, red onion and radishes; chop chilli and coriander. Mix with lime juice and salt. Chill, and drain excess liquid before serving."
+    },
+    {
+      "title": "Dress the cabbage",
+      "instruction": "Finely shred cabbage, toss with lime juice and salt, and massage for around 30 seconds. Keep crunchy; add coriander if desired."
+    },
+    {
+      "title": "Mix Baja crema",
+      "instruction": "Mix mayonnaise, Greek yoghurt, cider vinegar, lime, garlic powder, paprika, cumin and salt. Thin gradually with 1–2 tsp water until drizzleable. Refrigerate."
+    },
+    {
+      "title": "Cook smoky black beans",
+      "instruction": "Heat olive oil and soften diced red onion for 3 minutes. Add garlic, cumin and paprika for 30 seconds. Add drained black beans and 50ml water. Simmer 5–7 minutes and mash about one third. Finish with lime juice and salt. Keep warm."
+    },
+    {
+      "title": "Prepare frying station",
+      "instruction": "Put a wire rack over a tray. Heat oil in a heavy deep pan filled no more than one-third full to 175–180°C. Never leave hot oil unattended."
+    },
+    {
+      "title": "Make cold beer batter",
+      "instruction": "Whisk 80g flour with cornflour, baking powder, paprika, garlic powder and salt. Gradually stir in up to 130ml ice-cold lager to a thick double-cream consistency. A few lumps are fine; do not overmix."
+    },
+    {
+      "title": "Batter and fry prawns",
+      "instruction": "Dust dried prawns in the extra flour. Dip into batter and fry in small batches at 175–180°C for about 2–4 minutes depending on size, until golden, crisp and opaque throughout. Drain on rack; allow oil to return to temperature between batches."
+    },
+    {
+      "title": "Warm tortillas",
+      "instruction": "Warm each tortilla in a dry pan for 20–30 seconds per side; hold in a clean tea towel."
+    },
+    {
+      "title": "Assemble and serve",
+      "instruction": "Layer black beans, lime cabbage, battered prawns, radish pico and Baja crema in each tortilla. Finish with coriander and lime. Serve immediately."
+    }
+  ],
+  "notes": [
+    "Recipe is calibrated for two people after a successful 540g batch made more prawns than needed.",
+    "Use the cold lager gradually; flour absorbency varies.",
+    "Prefer weighing scale-friendly quantities for future serving adjustment. Fractions of produce are approximate and may need rounding.",
+    "Do not store raw battered prawns at room temperature; cook promptly and refrigerate cooked leftovers.",
+    "This is a seed recipe for a future cookbook, not yet wired into the mobile app or database."
+  ]
+}
